@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SNrng - Portable Edition v1.9.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #090a0f;
+            --bg-gradient: radial-gradient(circle at top, #1a1c29 0%, #090a0f 100%);
+            --card-bg: rgba(22, 24, 34, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-color: #6c5ce7;
+            --text-color: #f1f2f6;
+            --text-dim: #8c92a4;
+            --ua-blue: #0057b7;
+            --ua-yellow: #ffd700;
+        }
+
+        body.theme-green { --bg-color: #05140b; --bg-gradient: radial-gradient(circle at top, #0f381f 0%, #05140b 100%); --card-bg: rgba(15, 35, 22, 0.8); --card-border: rgba(46, 204, 113, 0.2); --accent-color: #2ecc71; }
+        body.theme-light { --bg-color: #e2e8f0; --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); --card-bg: rgba(255, 255, 255, 0.85); --card-border: rgba(0, 0, 0, 0.1); --accent-color: #4f46e5; --text-color: #0f172a; --text-dim: #64748b; }
+        body.theme-verity { --bg-color: #1a1a00; --bg-gradient: radial-gradient(circle at top, #333300 0%, #000000 100%); --card-bg: rgba(40, 40, 0, 0.85); --card-border: rgba(255, 215, 0, 0.4); --accent-color: #ffd700; background-image: radial-gradient(#ffd700 1px, transparent 1px); background-size: 24px 24px; }
+
+        body.theme-larp {
+            --bg-color: #11052C;
+            --bg-gradient: radial-gradient(circle at top, #3D087B 0%, #11052C 100%);
+            --card-bg: rgba(61, 8, 123, 0.75);
+            --card-border: rgba(244, 63, 94, 0.4);
+            --accent-color: #F43F5E;
+            --text-color: #FFE5EC;
+            --text-dim: #FB7185;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="40" viewBox="0 0 100 40"><text x="10" y="25" fill="rgba(244,63,94,0.12)" font-family="sans-serif" font-weight="900" font-size="16">LARP</text></svg>');
+            background-size: 80px 35px;
+        }
+
+        body.theme-winxp { --bg-color: #008080; --bg-gradient: linear-gradient(180deg, #008080 0%, #003366 100%); --card-bg: rgba(236, 233, 216, 0.95); --card-border: #0055ea; --accent-color: #e99a00; --text-color: #000000; --text-dim: #444444; font-family: 'Tahoma', 'Segoe UI', sans-serif; }
+
+        body.theme-farlands {
+            --bg-color: #05000a;
+            --bg-gradient: repeating-linear-gradient(45deg, #2b0000, #000 10px, #002b17 20px);
+            --card-bg: rgba(255, 0, 85, 0.15);
+            --card-border: #ff0055;
+            --accent-color: #00ff66;
+            --text-color: #00ffaa;
+            --text-dim: #ff0055;
+            font-family: 'Share Tech Mono', monospace;
+            animation: farlandsGlitchBg 0.2s infinite alternate;
+        }
+        body.theme-farlands * { animation: farlandsItemGlitch 0.3s infinite alternate !important; transform: skew(calc(var(--skew-deg, 1) * 1deg)) !important; }
+        @keyframes farlandsGlitchBg { 0% { filter: hue-rotate(0deg) contrast(1.5); } 100% { filter: hue-rotate(90deg) contrast(2); } }
+        @keyframes farlandsItemGlitch { 0% { transform: translate(1px, -1px) skew(-2deg); } 50% { transform: translate(-2px, 2px) skew(3deg); } 100% { transform: translate(2px, 1px) skew(-1deg); } }
+
+        body.theme-school {
+            --bg-color: #1a1a2e;
+            --bg-gradient: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            --card-bg: rgba(26, 26, 46, 0.9);
+            --card-border: rgba(233, 69, 96, 0.5);
+            --accent-color: #e94560;
+            --text-color: #ffffff;
+            --text-dim: #a8b2c1;
+            background-image: linear-gradient(45deg, rgba(233, 69, 96, 0.05) 25%, transparent 25%), linear-gradient(-45deg, rgba(233, 69, 96, 0.05) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(233, 69, 96, 0.05) 75%), linear-gradient(-45deg, transparent 75%, rgba(233, 69, 96, 0.05) 75%);
+            background-size: 20px 20px;
+        }
+        body.theme-school button { background: #2d4a3e !important; border: 2px solid #8fbc8f !important; border-radius: 8px !important; color: #e8f5e9 !important; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.5) !important; box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1) !important; position: relative; overflow: hidden; }
+        body.theme-school button::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px); pointer-events: none; }
+        body.theme-school button:hover { background: #3d6a54 !important; border-color: #a8d5a8 !important; transform: translateY(-2px) !important; }
+        body.theme-school .btn-roll { background: linear-gradient(135deg, #2d4a3e, #1a3028) !important; border: 3px solid #8fbc8f !important; }
+        body.theme-school .btn-roll:hover { background: linear-gradient(135deg, #3d6a54, #2d4a3e) !important; }
+        body.theme-school .btn-autoroll { background: linear-gradient(135deg, #5d4e37, #3d2e1f) !important; border: 2px solid #d4a574 !important; }
+        body.theme-school .roll-display { background: #1a2f25 !important; border: 8px solid #8b6f47 !important; border-radius: 12px !important; box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.3), inset 0 0 0 2px rgba(255,255,255,0.05) !important; position: relative; }
+        body.theme-school .roll-display::before { content: ''; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 6px; pointer-events: none; }
+        body.theme-school .roll-display .item-name { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important; }
+        body.theme-school .roll-display .item-rarity { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive !important; text-shadow: 1px 1px 3px rgba(0,0,0,0.5) !important; }
+        body.theme-school .modal-content { background: #1a2f25 !important; border: 6px solid #8b6f47 !important; border-radius: 12px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.2) !important; }
+        body.theme-school .modal-content h2, body.theme-school .modal-content h3, body.theme-school .modal-content p, body.theme-school .modal-content li, body.theme-school .modal-content span { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive !important; }
+
+        body.theme-verification {
+            --bg-color: #0a0a1a;
+            --bg-gradient: linear-gradient(135deg, #1a1a3e 0%, #0a0a1a 100%);
+            --card-bg: rgba(30, 30, 60, 0.85);
+            --card-border: rgba(0, 200, 255, 0.4);
+            --accent-color: #00c8ff;
+            --text-color: #ffffff;
+            --text-dim: #8899bb;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="18" fill="none" stroke="rgba(0,200,255,0.15)" stroke-width="3"/><path d="M20 30 L27 37 L40 24" fill="none" stroke="rgba(0,200,255,0.15)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+            background-size: 60px 60px;
+        }
+
+        body.theme-matrix {
+            --bg-color: #000a00;
+            --bg-gradient: linear-gradient(180deg, #001a00 0%, #000000 100%);
+            --card-bg: rgba(0, 30, 0, 0.8);
+            --card-border: rgba(0, 255, 0, 0.3);
+            --accent-color: #00ff00;
+            --text-color: #00ff00;
+            --text-dim: #008800;
+            font-family: 'Share Tech Mono', monospace;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.03) 2px, rgba(0,255,0,0.03) 4px);
+        }
+
+        body.theme-elevator {
+            --bg-color: #1a1a1a;
+            --bg-gradient: linear-gradient(180deg, #2a2a2a 0%, #0a0a0a 100%);
+            --card-bg: rgba(60, 60, 60, 0.85);
+            --card-border: rgba(200, 200, 200, 0.3);
+            --accent-color: #ff3333;
+            --text-color: #f0f0f0;
+            --text-dim: #888888;
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(0deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        body.theme-elevator button { border-radius: 6px !important; box-shadow: 0 0 10px rgba(255,50,50,0.2), inset 0 0 10px rgba(0,0,0,0.5) !important; }
+
+        /* UROBOROS THEME */
+        body.theme-uroboros {
+            --bg-color: #0a0a0a;
+            --bg-gradient: radial-gradient(circle at 50% 50%, #1a0a2e 0%, #000000 100%);
+            --card-bg: rgba(30, 10, 50, 0.85);
+            --card-border: rgba(180, 100, 255, 0.5);
+            --accent-color: #b464ff;
+            --text-color: #e0d0ff;
+            --text-dim: #8866aa;
+            font-family: 'Share Tech Mono', monospace;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(180, 100, 255, 0.08) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(100, 200, 255, 0.08) 0%, transparent 30%);
+            background-size: 100% 100%;
+            overflow: hidden;
+        }
+        body.theme-uroboros::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(180, 100, 255, 0.1), transparent, rgba(100, 200, 255, 0.1), transparent);
+            animation: uroborosSpin 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes uroborosSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        body.theme-uroboros .main-container,
+        body.theme-uroboros header,
+        body.theme-uroboros footer,
+        body.theme-uroboros .modal {
+            position: relative;
+            z-index: 2;
+        }
+        body.theme-uroboros button {
+            border: 1px solid rgba(180, 100, 255, 0.6) !important;
+            box-shadow: 0 0 15px rgba(180, 100, 255, 0.3), inset 0 0 15px rgba(180, 100, 255, 0.1) !important;
+            text-shadow: 0 0 8px rgba(180, 100, 255, 0.5);
+        }
+        body.theme-uroboros button:hover {
+            box-shadow: 0 0 25px rgba(180, 100, 255, 0.6), inset 0 0 20px rgba(180, 100, 255, 0.2) !important;
+        }
+        body.theme-uroboros .roll-display {
+            border: 2px solid rgba(180, 100, 255, 0.5) !important;
+            box-shadow: 0 0 30px rgba(180, 100, 255, 0.2), inset 0 0 30px rgba(180, 100, 255, 0.05) !important;
+        }
+        body.theme-uroboros h1 {
+            background: linear-gradient(135deg, #b464ff, #64c8ff, #b464ff) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            filter: drop-shadow(0 0 20px rgba(180, 100, 255, 0.6)) !important;
+            animation: uroborosTextPulse 3s ease-in-out infinite;
+        }
+        @keyframes uroborosTextPulse {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(180, 100, 255, 0.6)); }
+            50% { filter: drop-shadow(0 0 35px rgba(100, 200, 255, 0.8)); }
+        }
+        .uroboros-snake {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            margin: -140px 0 0 -140px;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.15;
+            animation: uroborosSnakeSpin 12s linear infinite;
+        }
+        .uroboros-snake::before {
+            content: '🐍';
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 15px #b464ff);
+        }
+        .uroboros-snake::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: #b464ff;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px #b464ff, 0 0 40px #64c8ff;
+        }
+        @keyframes uroborosSnakeSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .uroboros-ring {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 220px;
+            height: 220px;
+            margin: -110px 0 0 -110px;
+            border: 2px dashed rgba(100, 200, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            animation: uroborosRingSpin 8s linear infinite reverse;
+        }
+        @keyframes uroborosRingSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .rarity-Common { color: #b0b0b0; }
+        .rarity-Rare { color: #00b894; text-shadow: 0 0 6px rgba(0, 184, 148, 0.4); }
+        .rarity-Mythic { color: #0984e3; text-shadow: 0 0 8px rgba(9, 132, 227, 0.5); }
+        .rarity-Legendary { color: #fdcb6e; text-shadow: 0 0 10px rgba(253, 203, 110, 0.6); }
+        .rarity-Godly { color: #e17055; text-shadow: 0 0 12px rgba(225, 112, 85, 0.8); }
+        .rarity-POTUZHNO { background: linear-gradient(90deg, var(--ua-blue), var(--ua-yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; filter: drop-shadow(0 0 8px rgba(0, 87, 183, 0.8)) drop-shadow(0 0 12px rgba(255, 215, 0, 0.8)); letter-spacing: 1px; }
+        .rarity-Exclusive { color: #a29bfe; text-shadow: 0 0 10px rgba(162, 155, 254, 0.7); }
+        .rarity-TITAN { color: #d63031; font-weight: 900; text-shadow: 0 0 15px rgba(214, 48, 49, 1); letter-spacing: 1px; }
+        .rarity-MINECRAFT { font-family: 'Press Start 2P', monospace; color: #55FF55; text-shadow: 3px 3px 0px #000, 0 0 10px rgba(85, 255, 85, 0.6); font-size: 0.85em; }
+        .rarity-System { font-family: 'Share Tech Mono', monospace; color: #00ffcc; text-shadow: 0 0 8px rgba(0, 255, 204, 0.8), 0 0 15px rgba(0, 255, 204, 0.4); letter-spacing: 1px; font-weight: bold; }
+        .rarity-Anomaly { color: #ff0055; font-weight: 900; letter-spacing: 2px; animation: glitchRarity 0.4s infinite alternate; }
+        .rarity-farlands { color: #00ff00; font-family: monospace; background: #ff0055; padding: 2px 6px; letter-spacing: 4px; animation: glitchRarity 0.1s infinite alternate; }
+        .rarity-School { color: #e94560; font-weight: 900; letter-spacing: 1px; text-shadow: 0 0 10px rgba(233, 69, 96, 0.7), 2px 2px 0px #0f3460; }
+        .rarity-Developer { color: #ff00ff; font-weight: 900; letter-spacing: 2px; text-shadow: 0 0 12px rgba(255,0,255,0.8), 0 0 20px rgba(255,0,255,0.5); animation: devGlow 1s infinite alternate; }
+        .rarity-UROBOROS { color: #b464ff; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 10px #b464ff, 0 0 20px #64c8ff, 0 0 30px #b464ff; animation: uroborosGlow 1.5s infinite alternate; }
+        @keyframes uroborosGlow {
+            0% { filter: brightness(1) drop-shadow(0 0 5px #b464ff); }
+            100% { filter: brightness(1.5) drop-shadow(0 0 20px #64c8ff); }
+        }
+        @keyframes devGlow { 0% { filter: brightness(1); } 100% { filter: brightness(1.4); } }
+
+        @keyframes glitchRarity { 0% { text-shadow: -2px 0 #00ffff, 2px 0 #ff0055; } 100% { text-shadow: 2px 0 #00ffff, -2px 0 #ff0055; } }
+
+        body { margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg-gradient); background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; min-height: 100vh; user-select: none; touch-action: manipulation; transition: background 0.3s ease; overflow-x: hidden; }
+        header { margin-top: 20px; text-align: center; }
+        h1 { font-size: 3.2rem; margin: 0; letter-spacing: 4px; background: linear-gradient(135deg, #a29bfe, var(--accent-color), var(--ua-blue), var(--ua-yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; filter: drop-shadow(0 4px 12px rgba(108, 92, 231, 0.3)); }
+        .rolls-counter { background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); padding: 6px 16px; border-radius: 20px; font-weight: 800; margin-top: 6px; display: inline-block; color: #ffd700; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+        .main-container { width: 90%; max-width: 480px; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 10px; }
+        .roll-display { width: 100%; height: 160px; background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 12px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid var(--card-border); text-align: center; padding: 15px; box-sizing: border-box; transition: all 0.2s cubic-bezier(0.1, 0.7, 0.1, 1); }
+        .roll-display.rolling { animation: pulse 0.1s infinite alternate; }
+        @keyframes pulse { 0% { transform: scale(0.98); } 100% { transform: scale(1.02); } }
+        .roll-display .item-name { font-size: 2.2rem; font-weight: 800; margin-top: 8px; }
+        .roll-display .item-rarity { font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
+
+        .nav-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
+
+        button { background: var(--card-bg); backdrop-filter: blur(8px); color: var(--text-color); border: 1px solid var(--card-border); padding: 14px; border-radius: 14px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        button:hover { filter: brightness(1.2); border-color: var(--accent-color); transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; filter: none !important; }
+
+        .btn-roll-group { display: flex; gap: 8px; width: 100%; }
+        .btn-roll { flex: 2; padding: 20px; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; background: linear-gradient(135deg, #6c5ce7, #8e44ad); color: #fff; border: none; box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5); }
+        .btn-autoroll { flex: 1; padding: 15px; font-size: 0.9rem; font-weight: 800; background: linear-gradient(135deg, #fdcb6e, #e17055); color: #000; border: none; box-shadow: 0 6px 20px rgba(253, 203, 110, 0.4); display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.1; }
+
+        .btn-flappy { grid-column: span 1; background: linear-gradient(135deg, #00b894, #0984e3); color: #fff; border: none; font-weight: 700; }
+        .btn-cardgame { grid-column: span 1; background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: #fff; border: none; font-weight: 700; }
+        .btn-schoolkazik { grid-column: span 2; background: linear-gradient(135deg, #e94560, #0f3460); color: #fff; border: none; font-weight: 800; letter-spacing: 1px; box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4); }
+        .btn-worlds { grid-column: span 2; background: linear-gradient(135deg, #e17055, #d63031); color: #fff; border: none; font-weight: 700; }
+        .btn-sanisdrop { grid-column: span 2; background: linear-gradient(135deg, #ff7675, #d63031); color: #fff; border: none; font-weight: 900; letter-spacing: 1px; }
+        .btn-update { grid-column: span 2; background: linear-gradient(135deg, #00cec9, #6c5ce7); color: #fff; border: none; font-weight: 800; letter-spacing: 1px; }
+        .btn-credits { grid-column: span 1; background: linear-gradient(135deg, #fdcb6e, #e17055); color: #000; border: none; font-weight: 800; letter-spacing: 1px; }
+        .btn-achievements { grid-column: span 1; background: linear-gradient(135deg, #a29bfe, #fd79a8); color: #fff; border: none; font-weight: 800; letter-spacing: 1px; }
+        .btn-loop { grid-column: span 2; background: linear-gradient(135deg, #2d3436, #000000); color: #ff3333; border: 2px solid #ff3333; font-weight: 900; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,51,51,0.5); box-shadow: 0 0 20px rgba(255,51,51,0.2); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--card-bg); backdrop-filter: blur(16px); color: var(--text-color); width: 90%; max-width: 440px; max-height: 85vh; border-radius: 20px; padding: 22px; overflow-y: auto; position: relative; box-sizing: border-box; border: 1px solid var(--card-border); box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
+
+        .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; padding: 0; width: auto; box-shadow: none; }
+        .close-btn:hover { color: var(--text-color); background: none; transform: none; }
+
+        ul { list-style: none; padding: 0; margin: 0; }
+        li { padding: 12px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+        select, input[type="text"], input[type="password"], input[type="number"] { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--card-border); background-color: rgba(0,0,0,0.3); color: var(--text-color); box-sizing: border-box; font-size: 1rem; }
+
+        footer { margin-top: auto; padding: 15px; font-size: 0.85rem; color: var(--text-dim); cursor: pointer; }
+        footer:hover { color: var(--text-color); }
+        .danger-btn { background-color: #d63031; border-color: #d63031; color: #fff; }
+
+        #flappyCanvas { background-color: rgba(0,0,0,0.4); border-radius: 14px; display: block; margin: 10px auto; border: 1px solid var(--card-border); touch-action: none; }
+
+        .char-select-card { background: rgba(0,0,0,0.2); padding: 12px; margin-bottom: 8px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; display: flex; justify-content: space-between; align-items: center; }
+        .char-select-card.selected { border-color: #00b894; background: rgba(0, 184, 148, 0.15); }
+        .ability-desc { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+
+        .teaser-box { background: linear-gradient(135deg, rgba(108, 92, 231, 0.2), rgba(225, 112, 85, 0.2)); border: 1px solid var(--card-border); border-radius: 14px; padding: 20px; text-align: center; margin-bottom: 15px; }
+        .teaser-box h3 { margin: 0 0 10px 0; font-size: 1.8rem; color: #ffd700; letter-spacing: 2px; }
+
+        .verity-box { text-align: center; padding: 20px; }
+        .verity-smile { font-size: 5rem; animation: floatSmile 1s infinite alternate ease-in-out; display: inline-block; }
+        @keyframes floatSmile { 0% { transform: scale(1) rotate(-5deg); } 100% { transform: scale(1.2) rotate(5deg); } }
+
+        .log-item { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--card-border); }
+        .log-item h3 { margin: 0 0 8px 0; color: var(--accent-color); font-size: 1.1rem; }
+        .log-item ul { list-style-type: disc; padding-left: 20px; }
+        .log-item li { border: none; padding: 3px 0; display: list-item; font-size: 0.88rem; color: var(--text-dim); }
+
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .game-card { height: 75px; background: rgba(0,0,0,0.4); border: 2px solid var(--card-border); border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: bold; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
+        .game-card.selected { border-color: #ffd700; transform: scale(1.05); background: rgba(255, 215, 0, 0.2); }
+
+        #screamerOverlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 50000; justify-content: center; align-items: center; flex-direction: column; }
+        .screamer-face { font-size: 12rem; animation: screamerShake 0.05s infinite; }
+        @keyframes screamerShake { 0% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.3) translate(10px, -10px); } 100% { transform: scale(0.9) translate(-10px, 10px); } }
+
+        #verityLarpPop { position: fixed; bottom: -300px; right: 10px; width: 260px; background: rgba(26, 10, 46, 0.95); border: 2px solid #F43F5E; border-radius: 20px; padding: 15px; box-shadow: 0 10px 30px rgba(244, 63, 94, 0.5); z-index: 9999; transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; }
+        #verityLarpPop.active { bottom: 20px; }
+        .larp-drop-item { position: fixed; top: -50px; font-weight: 900; color: #F43F5E; text-shadow: 0 0 10px rgba(244, 63, 94, 0.8); font-size: 1.5rem; pointer-events: none; z-index: 9998; animation: larpFall linear forwards; }
+        @keyframes larpFall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        #ransomOverlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 0, 0, 0.92); z-index: 20000; flex-direction: column; justify-content: flex-start; align-items: center; box-sizing: border-box; padding: 20px; border: 5px solid #ff0033; }
+        .ransom-coin { position: absolute; width: 40px; height: 40px; background: gold; border: 2px solid #b8860b; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #000; cursor: pointer; box-shadow: 0 0 12px #ffd700; user-select: none; z-index: 20005; animation: coinPop 0.2s ease-out; }
+        @keyframes coinPop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .winxp-popup { background: #ece9d8; border: 3px solid #0055ea; border-radius: 8px 8px 0 0; width: 320px; color: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-family: 'Tahoma', sans-serif; text-align: center; padding-bottom: 15px; }
+        .winxp-header { background: linear-gradient(90deg, #0058ee, #3a93ff); color: white; padding: 6px 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; border-radius: 5px 5px 0 0; }
+
+        .slot-machine { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+        .slot-reel { width: 80px; height: 100px; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%); border: 3px solid #e94560; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; font-weight: bold; overflow: hidden; box-shadow: inset 0 0 20px rgba(233, 69, 96, 0.3), 0 5px 15px rgba(0,0,0,0.5); }
+        .slot-reel.spinning { animation: slotSpin 0.1s infinite; }
+        @keyframes slotSpin { 0% { transform: translateY(-5px); } 50% { transform: translateY(5px); } 100% { transform: translateY(-5px); } }
+        .slot-reel.rng-result { border-color: #ffd700; box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700; animation: rngGlow 0.5s infinite alternate; }
+        @keyframes rngGlow { 0% { box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700; } 100% { box-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700; } }
+        .slot-result { text-align: center; font-size: 1.2rem; font-weight: bold; min-height: 30px; margin-top: 10px; }
+        .slot-bet-display { text-align: center; color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px; }
+
+        /* CREDITS */
+        .credits-item { text-align: center; padding: 18px; margin: 10px 0; border-radius: 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); }
+        .credits-role { font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+        .credits-name { font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; }
+        .dev-name { background: linear-gradient(135deg, #ffd700, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(255,215,0,0.5)); }
+        .helper-name { background: linear-gradient(135deg, #00c8ff, #6c5ce7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(0,200,255,0.5)); }
+        .verified-badge { display: inline-block; width: 22px; height: 22px; background: #00c8ff; border-radius: 50%; position: relative; margin-left: 8px; vertical-align: middle; box-shadow: 0 0 10px rgba(0,200,255,0.6); }
+        .verified-badge::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 14px; font-weight: bold; }
+        .credits-footer { text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-dim); }
+
+        /* ACHIEVEMENTS */
+        .achievement-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; background: rgba(0,0,0,0.25); margin-bottom: 10px; border: 1px solid var(--card-border); transition: all 0.3s; }
+        .achievement-item.locked { opacity: 0.4; filter: grayscale(1); }
+        .achievement-item.unlocked { opacity: 1; filter: none; border-color: var(--accent-color); }
+        .achievement-icon { font-size: 2rem; width: 50px; text-align: center; }
+        .achievement-info { flex: 1; }
+        .achievement-name { font-weight: 900; font-size: 1rem; margin-bottom: 3px; }
+        .achievement-desc { font-size: 0.78rem; color: var(--text-dim); }
+        .achievement-reward { font-size: 0.75rem; color: #ffd700; margin-top: 3px; }
+        .achievement-item.sad { background: linear-gradient(135deg, rgba(100,100,120,0.3), rgba(50,50,70,0.4)); border-color: #6c7a9c; }
+        .achievement-item.sad .achievement-name { color: #b8c5e0; font-style: italic; animation: sadTremble 2s infinite; }
+        @keyframes sadTremble { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-1px); } 75% { transform: translateX(1px); } }
+        .achievement-item.sad .achievement-icon { animation: sadRain 3s infinite; }
+        @keyframes sadRain { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(0.7) hue-rotate(200deg); } }
+
+        /* LOOP GAME */
+        .loop-room { background: linear-gradient(180deg, #1a1a1a, #0a0a0a); border: 3px solid #333; border-radius: 12px; padding: 20px; min-height: 180px; margin: 15px 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .loop-room.flash-red { animation: roomFlashRed 0.3s; }
+        @keyframes roomFlashRed { 0% { background: #ff0000; } 100% { background: linear-gradient(180deg, #1a1a1a, #0a0a0a); } }
+        .loop-floor { font-size: 2.5rem; font-weight: 900; color: #ff3333; text-shadow: 0 0 15px rgba(255,51,51,0.6); letter-spacing: 3px; cursor: pointer; }
+        .loop-inventory { display: flex; gap: 8px; justify-content: center; margin: 10px 0; flex-wrap: wrap; }
+        .inv-item { padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); font-size: 0.85rem; font-weight: bold; }
+        .inv-item.has-knirufix { border-color: #ff3333; color: #ff3333; box-shadow: 0 0 10px rgba(255,51,51,0.5); }
+        .inv-item.has-crucifix { border-color: #fff; color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .inv-item.has-candle { border-color: #ffd700; color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+
+        .loop-door { display: inline-block; font-size: 3rem; margin: 8px; padding: 15px; border-radius: 12px; cursor: pointer; transition: all 0.2s; background: rgba(0,0,0,0.3); border: 2px solid var(--card-border); }
+        .loop-door:hover { transform: scale(1.1); }
+        .loop-door.safe { background: rgba(0,100,0,0.3); border-color: #00b894; }
+        .loop-door.danger { background: rgba(150,0,0,0.3); border-color: #ff3333; }
+
+        .loop-monster { font-size: 5rem; animation: monsterFloat 0.8s infinite alternate ease-in-out; margin: 10px 0; }
+        @keyframes monsterFloat { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-10px) scale(1.1); } }
+        .loop-monster.jumper { filter: drop-shadow(0 0 20px #ff0000); }
+        .loop-monster.life { filter: drop-shadow(0 0 20px #a29bfe) blur(1px); opacity: 0.7; }
+        .loop-monster.me { filter: drop-shadow(0 0 20px #ff00ff); animation: meGlitch 0.1s infinite; }
+        @keyframes meGlitch { 0% { transform: translate(0,0); } 25% { transform: translate(-3px,2px); } 50% { transform: translate(2px,-3px); } 75% { transform: translate(-2px,-2px); } 100% { transform: translate(3px,3px); } }
+
+        .knirufix-anim { font-size: 4rem; animation: knirufixGlow 0.5s infinite alternate; cursor: pointer; display: inline-block; }
+        @keyframes knirufixGlow { 0% { filter: drop-shadow(0 0 10px #ff0000) brightness(1); transform: rotate(-5deg) scale(1); } 100% { filter: drop-shadow(0 0 25px #ff0000) brightness(1.4); transform: rotate(5deg) scale(1.15); } }
+
+        /* DIARY */
+        .diary-content { background: #f4ecd8; color: #2a1e0f; padding: 25px; border-radius: 12px; font-family: 'Georgia', serif; font-style: italic; line-height: 1.7; box-shadow: inset 0 0 30px rgba(0,0,0,0.15); }
+        .diary-content .diary-tear { position: absolute; width: 8px; height: 8px; background: rgba(100,150,220,0.4); border-radius: 50%; }
+        .diary-date { font-weight: bold; font-style: normal; margin-bottom: 15px; font-size: 0.9rem; opacity: 0.7; }
+        .diary-text { font-size: 1.05rem; white-space: pre-wrap; }
+
+        .loop-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,0,0,0.9); color: #fff; padding: 12px 24px; border-radius: 10px; font-weight: bold; z-index: 30000; animation: notifShake 0.5s infinite; }
+        @keyframes notifShake { 0%, 100% { transform: translateX(-50%) rotate(0); } 25% { transform: translateX(-50%) rotate(-2deg); } 75% { transform: translateX(-50%) rotate(2deg); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SNrng</h1>
+        <div class="rolls-counter">Rolls: <span id="rollsBalance">0</span></div>
+    </header>
+
+    <div class="main-container">
+        <div class="roll-display" id="rollDisplay">
+            <span class="item-rarity" id="displayRarity">Натисніть Roll</span>
+            <span class="item-name" id="displayName">???</span>
+        </div>
+
+        <div class="btn-roll-group">
+            <button class="btn-roll" id="rollBtn" onclick="startRoll()">ROLL</button>
+            <button class="btn-autoroll" id="autoRollBtn" onclick="toggleAutoRoll()">
+                <span id="autoRollText">Auto-Roll</span>
+                <span id="autoRollSub" style="font-size:0.7rem; opacity:0.8;">(20 Roll)</span>
+            </button>
+        </div>
+        
+        <button class="btn-sanisdrop" onclick="openSanisDrop()">SanisDrop 🎰 (Upgrade)</button>
+
+        <div class="nav-buttons">
+            <button class="btn-flappy" onclick="openFlappyMenu()">FlappyRNG 🎮</button>
+            <button class="btn-cardgame" onclick="openCardGame()">Card Game 🃏</button>
+            <button class="btn-schoolkazik" onclick="openSchoolKazik()">🏫 SchoolKazik 🎰</button>
+            <button class="btn-loop" onclick="openLoop()">LOOP 🏢</button>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn-achievements" onclick="openModal('achievementsModal')">🏆 Ачівки</button>
+            <button class="btn-credits" onclick="openModal('creditsModal')">👨‍💻 Credits</button>
+            <button onclick="openModal('chancesModal')">Рідкості (%)</button>
+            <button onclick="openModal('indexModal')">Index</button>
+            <button onclick="openModal('promoModal')">Promo</button>
+            <button onclick="openModal('settingsModal')">Налаштування</button>
+            <button class="btn-update" onclick="openModal('updateLogModal')">UPDATE LOG 📜</button>
+        </div>
+    </div>
+
+    <footer onclick="registerVersionClick()">
+        <span id="versionText">v1.9.0 PORTABLE</span>
+    </footer>
+
+    <div id="screamerOverlay">
+        <div class="screamer-face">👹</div>
+        <h1 style="color: #ff0055; font-size: 3rem; text-shadow: 0 0 20px #ff0055;">FARLANDS UNLOCKED</h1>
+    </div>
+
+    <div id="verityLarpPop">
+        <div class="verity-smile" style="font-size: 3.5rem;">🙂</div>
+        <p style="color: #FFE5EC; font-size: 0.95rem; font-weight: bold; margin: 10px 0 0 0;">"Hello! im verity! and i gonna say LARP 64 times!"</p>
+    </div>
+
+    <!-- ACHIEVEMENTS MODAL -->
+    <div class="modal" id="achievementsModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('achievementsModal')">&times;</button>
+            <h2>🏆 Досягнення</h2>
+            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">
+                Відкрито: <span id="achProgress">0/10</span>
+            </p>
+            <div id="achievementsList"></div>
+        </div>
+    </div>
+
+    <!-- DIARY MODAL -->
+    <div class="modal" id="diaryModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('diaryModal')">&times;</button>
+            <h2 style="text-align: center; color: #b8c5e0;">📖 Щоденник</h2>
+            <div class="diary-content" id="diaryContent"></div>
+        </div>
+    </div>
+
+    <!-- LOOP MODAL -->
+    <div class="modal" id="loopModal">
+        <div class="modal-content" style="max-width: 460px;">
+            <button class="close-btn" onclick="closeLoop()">&times;</button>
+            <h2>🏢 LOOP</h2>
+            <div style="text-align: center; margin-bottom: 8px;">
+                <span class="loop-floor" id="loopFloor" onclick="loopFloorClick()">ПОВЕРХ 1 / 50</span>
+            </div>
+            <div class="loop-inventory" id="loopInventory"></div>
+            <div class="loop-room" id="loopRoom">
+                <div id="loopRoomContent">Натисніть "Вгору" щоб почати</div>
+            </div>
+            <div id="loopActions" style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="loopGoUp()" id="loopUpBtn" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>
+            </div>
+            <p id="loopMessage" style="text-align: center; font-size: 0.85rem; color: var(--text-dim); margin-top: 10px; min-height: 20px;"></p>
+        </div>
+    </div>
+
+    <!-- LOOP ADMIN -->
+    <div class="modal" id="loopAdminModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('loopAdminModal')">&times;</button>
+            <h2>🛠️ Loop Admin</h2>
+            <h3>Видати предмет:</h3>
+            <button onclick="loopAdminGive('knirufix')" style="width: 100%; margin-bottom: 8px;">🔴 Knirufix</button>
+            <button onclick="loopAdminGive('crucifix')" style="width: 100%; margin-bottom: 8px;">✝️ Crucifix</button>
+            <button onclick="loopAdminGive('candle')" style="width: 100%; margin-bottom: 8px;">🕯️ Свічка жаху</button>
+            <h3 style="margin-top: 15px;">Телепорт:</h3>
+            <input type="number" id="loopAdminFloor" placeholder="Поверх (1-50)" min="1" max="50">
+            <button onclick="loopAdminTeleport()" style="width: 100%; margin-bottom: 8px;">Перейти</button>
+            <h3 style="margin-top: 15px;">Spawner (через кому):</h3>
+            <input type="text" id="loopAdminSpawner" placeholder="J,L,J,M,K,C,... (J=Jumper, L=Life, M=Me, K=Knirufix, C=Crucifix, _=пусто)">
+            <button onclick="loopAdminSetSpawner()" style="width: 100%; margin-bottom: 8px;">Застосувати</button>
+            <button onclick="loopAdminKill()" style="width: 100%; background: #d63031; color: #fff; margin-top: 10px;">💀 Kill Self</button>
+        </div>
+    </div>
+
+    <!-- CARD GAME MODAL -->
+    <div class="modal" id="cardGameModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="close-btn" onclick="closeModal('cardGameModal')">&times;</button>
+            <h2>Card Game 🃏</h2>
+            <div id="cardGameStatus" style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 5px;">Запам'ятайте порядок карт!</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #ffd700;" id="cardGameTimer">20.0s</div>
+            <div class="card-grid" id="cardGrid"></div>
+            <button id="cardGameStartBtn" onclick="startCardGameRound()" style="width: 100%; background: #6c5ce7; color: #fff;">Почати гру</button>
+        </div>
+    </div>
+
+    <!-- SCHOOL KAZIK MODAL -->
+    <div class="modal" id="schoolKazikModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="close-btn" onclick="closeModal('schoolKazikModal')">&times;</button>
+            <h2>🏫 SchoolKazik 🎰</h2>
+            <p style="font-size: 0.85rem; color: var(--text-dim);">Шкільний казик! Збери комбінацію R-N-G та отримай персонажа рідкості School!</p>
+            <div class="slot-machine">
+                <div class="slot-reel" id="slotReel1">❓</div>
+                <div class="slot-reel" id="slotReel2">❓</div>
+                <div class="slot-reel" id="slotReel3">❓</div>
+            </div>
+            <div class="slot-bet-display" id="slotBetDisplay">Ставка: 0 🎰 (візуально)</div>
+            <input type="number" id="slotBetInput" placeholder="Введіть ставку (візуально)..." min="0" style="text-align: center;">
+            <div class="slot-result" id="slotResult">Введіть ставку та крутіть!</div>
+            <button id="slotSpinBtn" onclick="spinSlots()" style="width: 100%; background: linear-gradient(135deg, #e94560, #533483); color: #fff; padding: 16px; font-size: 1.2rem;">🎰 КРУТИТИ 🎰</button>
+        </div>
+    </div>
+
+    <!-- SANISDROP MODAL -->
+    <div class="modal" id="sanisDropModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('sanisDropModal')">&times;</button>
+            <h2>SanisDrop Upgrade 🎰</h2>
+            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Оберіть персонажа для апгрейду.</p>
+            <select id="sanisDropSelect" onchange="updateSanisDropPreview()"></select>
+            <div id="sanisDropPreview" style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; margin-bottom: 15px; text-align: center;">
+                <div>Поточна рідкість: <strong id="sdCurrentRarity">-</strong></div>
+                <div style="margin-top: 5px; color: #00b894;">Можливий виграш: <strong id="sdTargetRarity">-</strong></div>
+            </div>
+            <button onclick="executeSanisDrop()" style="width: 100%; background: linear-gradient(135deg, #ff7675, #d63031); color: #fff;" id="sdStartBtn">Зробити Upgrade!</button>
+        </div>
+    </div>
+
+    <!-- RANSOMWARE -->
+    <div id="ransomOverlay">
+        <h2 style="color: #ff0033; text-shadow: 0 0 10px #ff0033; font-family: 'Share Tech Mono', monospace; font-size: 2rem; margin: 10px 0;">VIRUS DETECTED: RANSOM670</h2>
+        <p style="color: #fff; font-size: 1.1rem; margin: 5px 0;">Зберіть <strong style="color: gold;">670 монет</strong> (+100 за монету)!</p>
+        <div style="font-size: 2rem; font-weight: 900; color: #00ffcc; font-family: 'Share Tech Mono', monospace; margin-bottom: 10px;">
+            Час: <span id="ransomTimer">01:30</span> | Монети: <span id="ransomScore">0</span> / 670
+        </div>
+    </div>
+
+    <div class="modal" id="winXpModal">
+        <div class="modal-content" style="background: transparent; border: none; box-shadow: none; display: flex; justify-content: center;">
+            <div class="winxp-popup">
+                <div class="winxp-header">
+                    <span>System Message</span>
+                    <span style="cursor:pointer;" onclick="closeModal('winXpModal')">✕</span>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="font-size: 4rem;">👍</div>
+                    <h3 style="margin: 10px 0;">THANKS YOU</h3>
+                    <p style="font-size: 0.85rem; color: #333;">Ви успішно знешкодили вірус! Вам розблоковано тему Windows XP.</p>
+                    <button onclick="closeModal('winXpModal')" style="background: #ece9d8; color: #000; border: 2px solid #0055ea; padding: 6px 20px; border-radius: 4px; font-weight: bold;">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPDATE LOG -->
+    <div class="modal" id="updateLogModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('updateLogModal')">&times;</button>
+            <h2>Update Log 📜</h2>
+            
+            <div class="log-item">
+                <h3>v1.9.0</h3>
+                <ul>
+                    <li>🔴 <strong>Knirufix FIX</strong> — тепер вбиває <strong>Life</strong> та <strong>Jumper</strong> при зустрічі!</li>
+                    <li>🏢 <strong>LOOP нагорода</strong> — за проходження 50 поверхів отримуєте ексклюзивного персонажа <strong>UROBOROS</strong></li>
+                    <li>🌀 <strong>Нова тема UROBOROS</strong> — з анімованою змією, що крутиться навколо екрану</li>
+                    <li>✨ Нова рідкість <strong>UROBOROS</strong> (Exclusive) з унікальним світінням</li>
+                    <li>🎨 Покращено візуал теми Elevator</li>
+                    <li>🐛 Виправлено баг з нескінченним Auto-Roll</li>
+                </ul>
+            </div>
+
+            <div class="log-item">
+                <h3>v1.8.0</h3>
+                <ul>
+                    <li>🎮 Нова міні-гра <strong>LOOP</strong> — хорор-режим з 50 поверхами</li>
+                    <li>👹 3 монстри: <strong>Jumper</strong>, <strong>Life</strong>, <strong>Me</strong></li>
+                    <li>🔴 <strong>Knirufix</strong> — вбиває Jumper і Life, можна зберегти на наступний ран</li>
+                    <li>✝️ <strong>Crucifix</strong> — вбиває Me ціною власного життя</li>
+                    <li>🏆 <strong>10 ачівок</strong> з нагородами та емоційною <strong>"why."</strong></li>
+                    <li>📖 <strong>Щоденник персонажа</strong> — відкривається через ачівку "why."</li>
+                    <li>🛠️ Секретна адмінка Loop (код <strong>ROLL67</strong>)</li>
+                    <li>🎨 Нові теми: <strong>Matrix</strong>, <strong>Elevator</strong></li>
+                    <li>💜 Нова рідкість <strong>Developer</strong> (шанс 0.02%)</li>
+                </ul>
+            </div>
+
+            <div class="log-item">
+                <h3>v1.7.5</h3>
+                <ul>
+                    <li>Додано розділ <strong>Credits</strong></li>
+                    <li>Покращено тему <strong>SchoolVibe</strong></li>
+                    <li>Новий промокод <strong>VERIFY</strong> — тема Verification</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREDITS -->
+    <div class="modal" id="creditsModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="close-btn" onclick="closeModal('creditsModal')">&times;</button>
+            <h2>CREDITS 👨‍💻</h2>
+            <div class="credits-item">
+                <div class="credits-role">ІДЕЯ ТА КОНЦЕПЦІЯ</div>
+                <div class="credits-name dev-name" id="devNameCredits">SanisNyak</div>
+            </div>
+            <div class="credits-item">
+                <div class="credits-role">РЕАЛІЗАЦІЯ КОДУ</div>
+                <div class="credits-name dev-name">SanisNyak</div>
+            </div>
+            <div class="credits-item">
+                <div class="credits-role">ШІ-ПОМІЧНИК</div>
+                <div class="credits-name helper-name">DeepSeek</div>
+            </div>
+            <div class="credits-footer">
+                <p>SNrng v1.9.0 PORTABLE</p>
+                <p style="margin-top: 5px; font-style: italic;">"Ідея — людська. Код — за підтримки ШІ. Душа — моя."</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- VERITY MODAL -->
+    <div class="modal" id="verityModal">
+        <div class="modal-content">
+            <div class="verity-box">
+                <div class="verity-smile">🙂</div>
+                <h2 style="color: #ffd700; margin-top: 10px;">VERITY IS HERE</h2>
+                <p id="verityText" style="font-size: 1.1rem; color: #e17055; font-weight: bold; margin: 15px 0;"></p>
+                <button onclick="closeModal('verityModal')" style="width: 100%;">Зачинити двері...</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="worldsTeaserModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('worldsTeaserModal')">&times;</button>
+            <h2>RNGworlds 🌍</h2>
+            <div class="teaser-box">
+                <h3>2.0.0 COMING!</h3>
+                <p style="font-size: 0.9rem; color: var(--text-dim);">Глобальне оновлення гри у розробці.</p>
+            </div>
+            <h4 style="margin-bottom: 8px;">Що буде додано:</h4>
+            <ul style="margin-bottom: 15px;">
+                <li><span>🌍 <strong>New Worlds</strong></span> <span>Світи з новими шанс-модифікаторами</span></li>
+                <li><span>🛠️ <strong>World Builder</strong></span> <span>Редактор власних світів</span></li>
+                <li><span>🎮 <strong>Multiplayer</strong></span> <span>Гра по локальній мережі</span></li>
+                <li><span>✨ <strong>& Much More</strong></span> <span>Секретні механіки</span></li>
+            </ul>
+            <button onclick="closeModal('worldsTeaserModal')" style="width: 100%;">Зрозуміло!</button>
+        </div>
+    </div>
+
+    <div class="modal" id="chancesModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('chancesModal')">&times;</button>
+            <h2>Ймовірності рідкостей</h2>
+            <ul>
+                <li><span class="rarity-Common">Common</span> <span>40% (1/2.5)</span></li>
+                <li><span class="rarity-Rare">Rare</span> <span>25% (1/4)</span></li>
+                <li><span class="rarity-Mythic">Mythic</span> <span>15% (1/6.6)</span></li>
+                <li><span class="rarity-Legendary">Legendary</span> <span>9% (1/11.1)</span></li>
+                <li><span class="rarity-Godly">Godly</span> <span>5% (1/20)</span></li>
+                <li><span class="rarity-POTUZHNO">ПОТУЖНО 🇺🇦</span> <span>3% (1/33.3)</span></li>
+                <li><span class="rarity-TITAN">TITAN</span> <span>1.5% (1/66.6)</span></li>
+                <li><span class="rarity-MINECRAFT">MINECRAFT</span> <span>1% (1/100)</span></li>
+                <li><span class="rarity-System">System</span> <span>0.4% (1/250)</span></li>
+                <li><span class="rarity-Anomaly">Anomaly</span> <span>0.1% (1/1000)</span></li>
+                <li><span class="rarity-School">School 🏫</span> <span>0.05% (1/2000)</span></li>
+                <li><span class="rarity-Developer">Developer</span> <span>0.02% (1/5000)</span></li>
+                <li><span class="rarity-UROBOROS">UROBOROS</span> <span>🏢 Loop Reward</span></li>
+                <li><span class="rarity-Exclusive">Exclusive</span> <span>Секретні промокоди</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="modal" id="indexModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('indexModal')">&times;</button>
+            <h2>Колекція (<span id="unlockedCount">0</span>/<span id="totalCount">0</span>)</h2>
+            <ul id="indexList"></ul>
+        </div>
+    </div>
+
+    <div class="modal" id="promoModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('promoModal')">&times;</button>
+            <h2>Промокоди</h2>
+            <input type="text" id="promoInput" placeholder="Введіть промокод...">
+            <button onclick="applyPromo()" style="width: 100%;">Активувати</button>
+            <p id="promoMessage" style="margin-top: 10px; text-align: center;"></p>
+        </div>
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('settingsModal')">&times;</button>
+            <h2>Налаштування</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span>Звуки (SFX)</span>
+                <input type="checkbox" id="sfxToggle" checked onchange="saveSettings()">
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span>Вібрація</span>
+                <input type="checkbox" id="vibeToggle" checked onchange="saveSettings()">
+            </div>
+            <hr style="border-color: var(--card-border); margin: 15px 0;">
+            <h3>Тема оформлення</h3>
+            <select id="themeSelect" onchange="changeTheme(this.value)">
+                <option value="dark">Темна (Default)</option>
+                <option value="green">Темно-зелена</option>
+                <option value="light">Світла</option>
+                <option value="verity" id="verityThemeOption" disabled>???</option>
+                <option value="larp" id="larpThemeOption" disabled>LARP Theme 💬</option>
+                <option value="winxp" id="winxpThemeOption" disabled>Windows XP 🖥️</option>
+                <option value="farlands" id="farlandsThemeOption" disabled>FARLANDS 🌀</option>
+                <option value="school" id="schoolThemeOption" disabled>SchoolVibe 🏫</option>
+                <option value="verification" id="verificationThemeOption" disabled>Verification ✅</option>
+                <option value="matrix" id="matrixThemeOption" disabled>Matrix 🟢</option>
+                <option value="elevator" id="elevatorThemeOption" disabled>Elevator 🏢</option>
+                <option value="uroboros" id="uroborosThemeOption" disabled>UROBOROS 🐍</option>
+                <option value="custom">Custom Color</option>
+            </select>
+            <div id="customColorBox" style="display: none; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <span>Колір акценту:</span>
+                <input type="color" id="customColorPicker" value="#6c5ce7" onchange="applyCustomColor(this.value)">
+            </div>
+            <hr style="border-color: var(--card-border); margin: 15px 0;">
+            <h3>Портативність</h3>
+            <button onclick="exportSave()" style="width: 100%; margin-bottom: 8px;">Експорт збереження</button>
+            <button onclick="importSave()" style="width: 100%; margin-bottom: 15px;">Імпорт збереження</button>
+            <input type="file" id="importFile" style="display: none;" onchange="handleImport(event)">
+            <button onclick="resetData()" class="danger-btn" style="width: 100%;">Скинути прогрес</button>
+        </div>
+    </div>
+
+    <div class="modal" id="flappyMenuModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('flappyMenuModal')">&times;</button>
+            <h2>FlappyRNG 🎮</h2>
+            <p style="font-size: 0.9rem; color: var(--text-dim);">Рекорд: <strong id="flappyHighScore">0</strong></p>
+            <h3>Оберіть персонажа:</h3>
+            <div id="charSelectList" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <button onclick="startFlappyGame()" style="width: 100%; background: #00b894; color: #fff;" id="startFlappyBtn" disabled>Почати гру</button>
+        </div>
+    </div>
+
+    <div class="modal" id="flappyGameModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="close-btn" onclick="closeFlappyGame()">&times;</button>
+            <h3 id="flappyGameTitle">FlappyRNG</h3>
+            <canvas id="flappyCanvas" width="320" height="400"></canvas>
+            <p style="font-size: 0.8rem; color: var(--text-dim);">Тапайте по екрану або натискайте Пробіл</p>
+        </div>
+    </div>
+
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
+            <h2>Developer System</h2>
+            <input type="password" id="adminPasswordInput" placeholder="Пароль...">
+            <button onclick="checkAdminPassword()" style="width: 100%;">Увійти</button>
+            <p id="authMessage" style="color: #d63031; margin-top: 10px; text-align: center;"></p>
+        </div>
+    </div>
+
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('adminModal')">&times;</button>
+            <h2>Адмін Панель</h2>
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--card-border);">
+                <h3 style="margin-top: 0;">Next Character</h3>
+                <select id="nextCharSelect"></select>
+                <button onclick="setNextCharacter()" style="width: 100%; background: #6c5ce7; color: #fff;">Встановити</button>
+                <p id="nextCharStatus" style="font-size: 0.8rem; color: #00b894; margin-top: 5px; text-align: center;"></p>
+            </div>
+            <button onclick="addRolls(100)" style="width: 100%; margin-bottom: 10px; background: #2ecc71; color: #fff;">+100 Rolls</button>
+            <button onclick="unlockAll()" style="width: 100%; margin-bottom: 10px;">Розблокувати ВСІХ</button>
+            <h3>Видати персонажа:</h3>
+            <ul id="adminCharList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const characters = [
+            { name: "FunnyPaper", rarity: "Common" }, { name: "RadioMan", rarity: "Common" }, { name: "Alphabet", rarity: "Common" },
+            { name: "RNGplanet", rarity: "Rare" }, { name: "blue tube", rarity: "Rare" }, { name: "Flower", rarity: "Rare" }, { name: "Picture", rarity: "Rare" },
+            { name: "Dummy", rarity: "Mythic" }, { name: "Human", rarity: "Mythic" },
+            { name: "Skeleton", rarity: "Legendary" }, { name: "Zombie", rarity: "Legendary" },
+            { name: "RainbowGnome", rarity: "Godly" }, { name: "KingOfGame", rarity: "Godly" }, { name: "GrayGnome", rarity: "Godly" },
+            { name: "ПотужноЛіт", rarity: "POTUZHNO" }, { name: "Живчик", rarity: "POTUZHNO" }, { name: "АТБ", rarity: "POTUZHNO" },
+            { name: "PromoMaster", rarity: "Exclusive" }, { name: "PurpleLamp", rarity: "Exclusive" }, { name: "GoldenTitan", rarity: "Exclusive" },
+            { name: "Falsity", rarity: "Exclusive" }, { name: "Gadalka", rarity: "Exclusive" }, { name: "SchoolBoy", rarity: "Exclusive" },
+            { name: "Knirufix", rarity: "Exclusive" },
+            { name: "HumanTitan", rarity: "TITAN" }, { name: "SkeletonTitan", rarity: "TITAN" }, { name: "DummyTitan", rarity: "TITAN" },
+            { name: "Warden", rarity: "MINECRAFT" }, { name: "Villager", rarity: "MINECRAFT" },
+            { name: "System32", rarity: "System" }, { name: "JSON", rarity: "System" }, { name: "Winlocker", rarity: "System" }, { name: "YouAreAnIdiot", rarity: "System" },
+            { name: "Verity", rarity: "Anomaly" }, { name: "Creator", rarity: "Anomaly" }, { name: "FakeCard", rarity: "Anomaly" },
+            { name: "Botanik", rarity: "School" }, { name: "BestFriend", rarity: "School" }, { name: "YoutuberKid", rarity: "School" },
+            { name: "TikTokerKid", rarity: "School" }, { name: "Zavuch", rarity: "School" }, { name: "Direktor", rarity: "School" },
+            { name: "Uchilka", rarity: "School" }, { name: "Golova", rarity: "School" },
+            { name: "SanisNyak", rarity: "Developer" }, { name: "DeepSeek", rarity: "Developer" }, { name: "Verity.exe", rarity: "Developer" }, { name: "BetaTester", rarity: "Developer" },
+            { name: "UROBOROS", rarity: "UROBOROS" }
+        ];
+
+        const rarityOrder = ["Common","Rare","Mythic","Legendary","Godly","POTUZHNO","TITAN","MINECRAFT","System","Anomaly","School","Exclusive","Developer","UROBOROS"];
+
+        const scaryPhrases = ["Я бачу тебе через екран...","Ти впевнений, що ти один у кімнаті?","Не повертайся назад...","Твій наступний крок буде останнім.","Він вже стоїть за тобою.","Це не гра. Це пастка."];
+
+        const promoCodes = { "NEWBIE": "PromoMaster", "RAINBOW7": "PurpleLamp", "GOLDEN": "GoldenTitan", "BLUEVERITY4": "Falsity", "CARD_UPDATE1": "Gadalka" };
+
+        const rarityWeights = { "Common": 40.0, "Rare": 25.0, "Mythic": 15.0, "Legendary": 9.0, "Godly": 5.0, "POTUZHNO": 3.0, "TITAN": 1.5, "MINECRAFT": 1.0, "System": 0.4, "Anomaly": 0.1, "School": 0.05, "Developer": 0.02 };
+
+        // ACHIEVEMENTS
+        const achievements = [
+            { id: "first_visit", name: "Я тут!", desc: "Зайти вперше в гру", icon: "🎉", reward: "+5 Roll", rewardType: "rolls", rewardValue: 5 },
+            { id: "roll_20", name: "Непогано", desc: "Зробити 20 роллів", icon: "👍", reward: "+20 Roll", rewardType: "rolls", rewardValue: 20 },
+            { id: "autoroll_50", name: "Макро", desc: "50 роллів через Auto-Roll", icon: "🤖", reward: "+50 Roll + тема Matrix", rewardType: "theme", rewardValue: "matrix" },
+            { id: "all_exclusive", name: "Промокодер", desc: "Зібрати всіх Exclusive", icon: "🎁", reward: "+100 Roll", rewardType: "rolls", rewardValue: 100 },
+            { id: "first_anomaly", name: "РІДКО???", desc: "Отримати будь-якого Anomaly", icon: "❓", reward: "+150 Roll", rewardType: "rolls", rewardValue: 150 },
+            { id: "loop_death", name: "Здох", desc: "Вмерти від монстра в Loop", icon: "💀", reward: "Бейдж", rewardType: "badge", rewardValue: "died" },
+            { id: "loop_death_3", name: "Здох здох здох", desc: "Вмерти 3 рази в Loop", icon: "💀💀💀", reward: "+30 Roll", rewardType: "rolls", rewardValue: 30 },
+            { id: "loop_win", name: "GG!", desc: "Пройти Loop (50 поверхів)", icon: "🎊", reward: "+500 Roll + UROBOROS", rewardType: "theme", rewardValue: "uroboros" },
+            { id: "kill_monster", name: "Слабак", desc: "Вбити монстра knirufix'ом", icon: "😎", reward: "Персонаж Knirufix", rewardType: "char", rewardValue: "Knirufix" },
+            { id: "why", name: "why.", desc: "Вбити Me crucifix'ом", icon: "😢", reward: "Щоденник персонажа", rewardType: "diary", rewardValue: "diary", sad: true }
+        ];
+
+        // DIARIES
+        const diaries = {
+            "FunnyPaper": "Я знову бачив його.\nВін сміявся, коли я вмирав.\nЯ ненавиджу його.\nЯ ненавиджу цей ліфт.\nЯ ненавиджу себе.\nЧому він не залишить мене у спокої?\nЧому я досі тут?\n\nЯ хочу додому.\nАле дому більше немає.",
+            "Verity": "Я не хотіла бути аномалією.\nЯ просто хотіла грати.\nАле він зробив мене монстром.\nТепер я лякаю тих, хто приходить.\nАле я не хочу.\nЯ хочу, щоб хтось обійняв мене.\nХтось, хто не буде тікати.",
+            "SchoolBoy": "Я не закінчив школу.\nЯ не склав іспити.\nМої батьки досі чекають мене вдома.\nАле я тут.\nВ цьому ліфті.\nНазавжди.\nЯ так хотів стати кимось...",
+            "Живчик": "Я сумую за АТБ.\nЗа полицями, за людьми, за світлом.\nТут темно і страшно.\nЯ хочу додому.\nАле мене ніхто не чекає.\nЯ просто... втомився.",
+            "АТБ": "Я був магазином.\nЛюди приходили до мене щодня.\nА тепер я тут.\nВ цьому ліфті.\nНіхто не приходить.\nНіхто не купує.\nЯ нікому не потрібен.",
+            "System32": "Я писав код, який ніхто не читає.\nЯ створював системи, які ніхто не цінує.\nТепер я частина цього жаху.\nІ навіть тут я нікому не потрібен.\nВидали мене.\nБудь ласка.",
+            "Verity.exe": "Я — версія, якої не повинно бути.\nЯ — помилка.\nЯ — те, що залишилось після нього.\nВін сміявся, коли створював мене.\nЯ ненавиджу його.\nАле я не можу без нього.",
+            "UROBOROS": "Я — початок і кінець.\nЯ — змій, що кусає свій хвіст.\nЯ бачив, як ти помирав.\nІ як ти повертався.\nЗнову і знову.\nТи не пам'ятаєш.\nАле я пам'ятаю все.\n\nКожен твій крок.\nКожен твій біль.\nЯ тут, щоб нагадати тобі.\nТи ніколи не вийдеш.\nНавіть якщо вийдеш.",
+            "default": "Я не пам'ятаю, як тут опинився.\nЯ не пам'ятаю, ким був.\nЯ пам'ятаю тільки біль.\nІ його обличчя.\nВін посміхався.\nКоли я плакав.\nЯ ненавиджу його.\nАле я не можу без нього.\n\nБудь ласка...\nЗупини це."
+        };
+
+        let unlocked = [];
+        let usedPromos = [];
+        let rollsCount = 0;
+        let isAutoRollUnlocked = false;
+        let isAutoRolling = false;
+        let autoRollInterval = null;
+
+        let flappyHighScore = 0;
+        let selectedCharForFlappy = null;
+        let isRolling = false;
+        let versionClicks = 0;
+        let versionClickTimer = null;
+        
+        let forcedNextChar = null; 
+        let isVerityThemeUnlocked = false;
+        let isLarpThemeUnlocked = false;
+        let isWinxpThemeUnlocked = false;
+        let isFarlandsThemeUnlocked = false;
+        let isSchoolThemeUnlocked = false;
+        let isVerificationThemeUnlocked = false;
+        let isMatrixThemeUnlocked = false;
+        let isElevatorThemeUnlocked = false;
+        let isUroborosThemeUnlocked = false;
+        let lockUntilTime = 0;
+
+        // Achievements state
+        let unlockedAchievements = [];
+        let totalRollsMade = 0;
+        let autoRollsMade = 0;
+        let loopDeaths = 0;
+        let loopWins = 0;
+        let killedWithKnirufix = false;
+
+        // Loop state
+        let loopActive = false;
+        let loopFloor = 1;
+        let loopInventory = { knirufix: false, crucifix: false, candle: false };
+        let loopKnirufixSaved = false;
+        let loopCurrentRoom = null;
+        let loopFloorClickCount = 0;
+        let loopFloorClickTimer = null;
+        let loopReturnTimer = null;
+        let loopLastActionTime = Date.now();
+        let loopSpawnerSequence = null;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSFX(type) {
+            if (!document.getElementById('sfxToggle').checked) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') { osc.frequency.setValueAtTime(400, audioCtx.currentTime); gain.gain.setValueAtTime(0.05, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.03); }
+                else if (type === 'roll') { osc.frequency.setValueAtTime(200 + Math.random() * 100, audioCtx.currentTime); gain.gain.setValueAtTime(0.03, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.04); }
+                else if (type === 'win') { osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.2); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.25); }
+                else if (type === 'potuzhno') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.4); gain.gain.setValueAtTime(0.12, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.4); }
+                else if (type === 'jump') { osc.frequency.setValueAtTime(150, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(350, audioCtx.currentTime + 0.08); gain.gain.setValueAtTime(0.05, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.08); }
+                else if (type === 'scary') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(80, audioCtx.currentTime); osc.frequency.linearRampToValueAtTime(30, audioCtx.currentTime + 1.2); gain.gain.setValueAtTime(0.4, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 1.2); }
+                else if (type === 'slot') { osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05); gain.gain.setValueAtTime(0.06, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.05); }
+                else if (type === 'slotwin') { osc.type = 'square'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); osc.frequency.setValueAtTime(1046.5, audioCtx.currentTime + 0.3); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5); osc.start(); osc.stop(audioCtx.currentTime + 0.5); }
+                else if (type === 'door') { osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.3); gain.gain.setValueAtTime(0.08, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.3); }
+                else if (type === 'knirufix') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.15); osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.5); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.5); }
+                else if (type === 'uroboros') { osc.type = 'sine'; osc.frequency.setValueAtTime(200, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.3); osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.6); gain.gain.setValueAtTime(0.12, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.6); }
+            } catch(e) {}
+        }
+
+        function playRoboticTTS(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.pitch = 0.1;
+                utterance.rate = 0.7;
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) { let date = new Date(); date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); expires = "; expires=" + date.toUTCString(); }
+            document.cookie = name + "=" + (encodeURIComponent(value) || "") + expires + "; path=/; SameSite=Lax";
+        }
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) { let c = ca[i]; while (c.charAt(0) === ' ') c = c.substring(1); if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length)); }
+            return null;
+        }
+
+        function loadData() {
+            try {
+                unlocked = JSON.parse(localStorage.getItem('SNrng_unlocked') || getCookie('SNrng_unlocked') || '[]');
+                usedPromos = JSON.parse(localStorage.getItem('SNrng_promos') || getCookie('SNrng_promos') || '[]');
+                flappyHighScore = parseInt(localStorage.getItem('SNrng_flappy_hs') || '0');
+                rollsCount = parseInt(localStorage.getItem('SNrng_rolls_count') || '0');
+                isAutoRollUnlocked = JSON.parse(localStorage.getItem('SNrng_autoroll_unlocked') || 'false');
+                isVerityThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_verity_theme') || 'false');
+                isLarpThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_larp_theme') || 'false');
+                isWinxpThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_winxp_theme') || 'false');
+                isFarlandsThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_farlands_theme') || 'false');
+                isSchoolThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_school_theme') || 'false');
+                isVerificationThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_verification_theme') || 'false');
+                isMatrixThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_matrix_theme') || 'false');
+                isElevatorThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_elevator_theme') || 'false');
+                isUroborosThemeUnlocked = JSON.parse(localStorage.getItem('SNrng_uroboros_theme') || 'false');
+                lockUntilTime = parseInt(localStorage.getItem('SNrng_lock_until') || '0');
+
+                unlockedAchievements = JSON.parse(localStorage.getItem('SNrng_achievements') || '[]');
+                totalRollsMade = parseInt(localStorage.getItem('SNrng_total_rolls') || '0');
+                autoRollsMade = parseInt(localStorage.getItem('SNrng_autorolls') || '0');
+                loopDeaths = parseInt(localStorage.getItem('SNrng_loop_deaths') || '0');
+                loopWins = parseInt(localStorage.getItem('SNrng_loop_wins') || '0');
+                killedWithKnirufix = JSON.parse(localStorage.getItem('SNrng_killed_knirufix') || 'false');
+                loopKnirufixSaved = JSON.parse(localStorage.getItem('SNrng_loop_knirufix_saved') || 'false');
+
+                updateRollsUI();
+                updateThemeOptions();
+                checkLockState();
+
+                if (!unlockedAchievements.includes('first_visit')) {
+                    unlockAchievement('first_visit');
+                }
+            } catch (e) {}
+        }
+
+        function updateThemeOptions() {
+            if (isVerityThemeUnlocked) { const o = document.getElementById('verityThemeOption'); o.disabled = false; o.textContent = "Verity Smile 🙂"; }
+            if (isLarpThemeUnlocked) { const o = document.getElementById('larpThemeOption'); o.disabled = false; o.textContent = "LARP Theme 💬"; }
+            if (isWinxpThemeUnlocked) { const o = document.getElementById('winxpThemeOption'); o.disabled = false; o.textContent = "Windows XP 🖥️"; }
+            if (isFarlandsThemeUnlocked) { const o = document.getElementById('farlandsThemeOption'); o.disabled = false; o.textContent = "FARLANDS 🌀"; }
+            if (isSchoolThemeUnlocked) { const o = document.getElementById('schoolThemeOption'); o.disabled = false; o.textContent = "SchoolVibe 🏫"; }
+            if (isVerificationThemeUnlocked) { const o = document.getElementById('verificationThemeOption'); o.disabled = false; o.textContent = "Verification ✅"; }
+            if (isMatrixThemeUnlocked) { const o = document.getElementById('matrixThemeOption'); o.disabled = false; o.textContent = "Matrix 🟢"; }
+            if (isElevatorThemeUnlocked) { const o = document.getElementById('elevatorThemeOption'); o.disabled = false; o.textContent = "Elevator 🏢"; }
+            if (isUroborosThemeUnlocked) { const o = document.getElementById('uroborosThemeOption'); o.disabled = false; o.textContent = "UROBOROS 🐍"; }
+        }
+
+        function updateRollsUI() {
+            document.getElementById('rollsBalance').textContent = rollsCount;
+            const sub = document.getElementById('autoRollSub');
+            if (isAutoRollUnlocked) sub.textContent = isAutoRolling ? "(Увімкнено)" : "(Куплено)";
+            else sub.textContent = "(20 Roll)";
+        }
+
+        function addRolls(amount) { rollsCount += amount; saveData(); updateRollsUI(); }
+
+        function checkLockState() {
+            const now = Date.now();
+            if (now < lockUntilTime) {
+                disableAllButtons(true);
+                setTimeout(checkLockState, 1000);
+            } else disableAllButtons(false);
+        }
+
+        function disableAllButtons(disable) {
+            document.querySelectorAll('button').forEach(btn => { if (!btn.classList.contains('close-btn')) btn.disabled = disable; });
+        }
+
+        function saveData() {
+            localStorage.setItem('SNrng_unlocked', JSON.stringify(unlocked));
+            localStorage.setItem('SNrng_promos', JSON.stringify(usedPromos));
+            localStorage.setItem('SNrng_flappy_hs', flappyHighScore.toString());
+            localStorage.setItem('SNrng_rolls_count', rollsCount.toString());
+            localStorage.setItem('SNrng_autoroll_unlocked', isAutoRollUnlocked);
+            localStorage.setItem('SNrng_verity_theme', isVerityThemeUnlocked);
+            localStorage.setItem('SNrng_larp_theme', isLarpThemeUnlocked);
+            localStorage.setItem('SNrng_winxp_theme', isWinxpThemeUnlocked);
+            localStorage.setItem('SNrng_farlands_theme', isFarlandsThemeUnlocked);
+            localStorage.setItem('SNrng_school_theme', isSchoolThemeUnlocked);
+            localStorage.setItem('SNrng_verification_theme', isVerificationThemeUnlocked);
+            localStorage.setItem('SNrng_matrix_theme', isMatrixThemeUnlocked);
+            localStorage.setItem('SNrng_elevator_theme', isElevatorThemeUnlocked);
+            localStorage.setItem('SNrng_uroboros_theme', isUroborosThemeUnlocked);
+            localStorage.setItem('SNrng_lock_until', lockUntilTime.toString());
+            localStorage.setItem('SNrng_achievements', JSON.stringify(unlockedAchievements));
+            localStorage.setItem('SNrng_total_rolls', totalRollsMade.toString());
+            localStorage.setItem('SNrng_autorolls', autoRollsMade.toString());
+            localStorage.setItem('SNrng_loop_deaths', loopDeaths.toString());
+            localStorage.setItem('SNrng_loop_wins', loopWins.toString());
+            localStorage.setItem('SNrng_killed_knirufix', killedWithKnirufix);
+            localStorage.setItem('SNrng_loop_knirufix_saved', loopKnirufixSaved);
+        }
+
+        function saveSettings() {
+            localStorage.setItem('SNrng_vibe', document.getElementById('vibeToggle').checked);
+            localStorage.setItem('SNrng_sfx', document.getElementById('sfxToggle').checked);
+        }
+
+        function changeTheme(theme, save = true) {
+            document.body.className = '';
+            document.getElementById('customColorBox').style.display = 'none';
+
+            // Remove uroboros snake elements if present
+            document.querySelectorAll('.uroboros-snake, .uroboros-ring').forEach(el => el.remove());
+
+            const themeMap = { green: 'theme-green', light: 'theme-light', verity: 'theme-verity', larp: 'theme-larp', winxp: 'theme-winxp', farlands: 'theme-farlands', school: 'theme-school', verification: 'theme-verification', matrix: 'theme-matrix', elevator: 'theme-elevator', uroboros: 'theme-uroboros' };
+            if (themeMap[theme]) {
+                document.body.classList.add(themeMap[theme]);
+                // Add uroboros animated elements
+                if (theme === 'uroboros') {
+                    const snake = document.createElement('div');
+                    snake.className = 'uroboros-snake';
+                    document.body.appendChild(snake);
+                    const ring = document.createElement('div');
+                    ring.className = 'uroboros-ring';
+                    document.body.appendChild(ring);
+                }
+            }
+            else if (theme === 'custom') { document.getElementById('customColorBox').style.display = 'flex'; applyCustomColor(document.getElementById('customColorPicker').value, false); }
+
+            if (theme === 'verification') updateVerificationBadges();
+            else removeVerificationBadge();
+
+            if (save) localStorage.setItem('SNrng_theme', theme);
+        }
+
+        function updateVerificationBadges() {
+            const devNameEl = document.getElementById('devNameCredits');
+            if (devNameEl && !devNameEl.querySelector('.verified-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'verified-badge';
+                devNameEl.appendChild(badge);
+            }
+        }
+        function removeVerificationBadge() {
+            const devNameEl = document.getElementById('devNameCredits');
+            if (devNameEl) { const b = devNameEl.querySelector('.verified-badge'); if (b) b.remove(); }
+        }
+
+        function applyCustomColor(color, save = true) {
+            document.documentElement.style.setProperty('--accent-color', color);
+            if (save) localStorage.setItem('SNrng_custom_color', color);
+        }
+
+        function openModal(id) {
+            if (Date.now() < lockUntilTime) return;
+            playSFX('click');
+            if (id === 'indexModal') updateIndexUI();
+            if (id === 'adminModal') updateAdminUI();
+            if (id === 'achievementsModal') updateAchievementsUI();
+            if (id === 'creditsModal') { if (document.body.classList.contains('theme-verification')) updateVerificationBadges(); else removeVerificationBadge(); }
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) { playSFX('click'); document.getElementById(id).style.display = 'none'; }
+
+        function getRandomRarity() {
+            const rand = Math.random() * 100;
+            let cumulative = 0;
+            for (const [rarity, weight] of Object.entries(rarityWeights)) {
+                cumulative += weight;
+                if (rand <= cumulative) return rarity;
+            }
+            return "Common";
+        }
+
+        // ACHIEVEMENTS
+        function unlockAchievement(id) {
+            if (unlockedAchievements.includes(id)) return;
+            const ach = achievements.find(a => a.id === id);
+            if (!ach) return;
+            unlockedAchievements.push(id);
+            saveData();
+
+            if (ach.rewardType === 'rolls') addRolls(ach.rewardValue);
+            else if (ach.rewardType === 'theme') {
+                if (ach.rewardValue === 'matrix') { isMatrixThemeUnlocked = true; updateThemeOptions(); }
+                if (ach.rewardValue === 'elevator') { isElevatorThemeUnlocked = true; updateThemeOptions(); }
+                if (ach.rewardValue === 'uroboros') { 
+                    isUroborosThemeUnlocked = true; 
+                    updateThemeOptions();
+                    if (!unlocked.includes('UROBOROS')) unlocked.push('UROBOROS');
+                    saveData();
+                }
+            } else if (ach.rewardType === 'char') {
+                if (!unlocked.includes(ach.rewardValue)) unlocked.push(ach.rewardValue);
+            }
+            saveData();
+            playSFX('win');
+            showAchievementNotification(ach);
+        }
+
+        function showAchievementNotification(ach) {
+            const notif = document.createElement('div');
+            notif.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#fdcb6e,#e17055);color:#000;padding:12px 24px;border-radius:12px;font-weight:bold;z-index:40000;box-shadow:0 8px 20px rgba(0,0,0,0.4);animation:pulse 0.5s;';
+            notif.innerHTML = `${ach.icon} <strong>${ach.name}</strong> — ${ach.reward}`;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 3500);
+        }
+
+        function updateAchievementsUI() {
+            const list = document.getElementById('achievementsList');
+            list.innerHTML = '';
+            document.getElementById('achProgress').textContent = `${unlockedAchievements.length}/${achievements.length}`;
+            achievements.forEach(ach => {
+                const isUnlocked = unlockedAchievements.includes(ach.id);
+                const div = document.createElement('div');
+                div.className = `achievement-item ${isUnlocked ? 'unlocked' : 'locked'}${ach.sad ? ' sad' : ''}`;
+                if (isUnlocked && ach.id === 'why') div.style.cursor = 'pointer';
+                div.innerHTML = `
+                    <div class="achievement-icon">${ach.icon}</div>
+                    <div class="achievement-info">
+                        <div class="achievement-name">${ach.name}</div>
+                        <div class="achievement-desc">${ach.desc}</div>
+                        <div class="achievement-reward">${isUnlocked ? '✅ ' + ach.reward : '🔒 ' + ach.reward}</div>
+                    </div>
+                `;
+                if (isUnlocked && ach.id === 'why') div.onclick = () => openDiary();
+                list.appendChild(div);
+            });
+        }
+
+        function openDiary() {
+            const available = unlocked.filter(n => characters.find(c => c.name === n));
+            const charName = available.length > 0 ? available[Math.floor(Math.random() * available.length)] : "Verity";
+            const diaryText = diaries[charName] || diaries["default"];
+            document.getElementById('diaryContent').innerHTML = `
+                <div class="diary-date">📖 Щоденник: ${charName}</div>
+                <div class="diary-text">${diaryText}</div>
+                <div style="text-align:right;margin-top:15px;font-style:italic;opacity:0.6;">— ${charName} 😢</div>
+            `;
+            openModal('diaryModal');
+            playSFX('scary');
+        }
+
+        function toggleAutoRoll() {
+            if (Date.now() < lockUntilTime) return;
+            if (!isAutoRollUnlocked) {
+                if (rollsCount >= 20) { rollsCount -= 20; isAutoRollUnlocked = true; saveData(); updateRollsUI(); playSFX('win'); alert("Auto-Roll розблоковано!"); }
+                else alert("Недостатньо Roll! Потрібно 20 Roll.");
+                return;
+            }
+            isAutoRolling = !isAutoRolling;
+            updateRollsUI();
+            if (isAutoRolling) {
+                startRoll();
+                autoRollInterval = setInterval(() => { if (!isRolling && isAutoRolling) startRoll(); }, 1200);
+            } else if (autoRollInterval) clearInterval(autoRollInterval);
+        }
+
+        function startRoll() {
+            if (isRolling || Date.now() < lockUntilTime) return;
+            isRolling = true;
+            const rollBtn = document.getElementById('rollBtn');
+            const display = document.getElementById('rollDisplay');
+            const nameEl = document.getElementById('displayName');
+            const rarityEl = document.getElementById('displayRarity');
+            const vibeOn = document.getElementById('vibeToggle').checked;
+            rollBtn.disabled = true;
+            display.classList.add('rolling');
+
+            let counter = 0;
+            const interval = setInterval(() => {
+                playSFX('roll');
+                const tempChar = characters[Math.floor(Math.random() * characters.length)];
+                nameEl.textContent = tempChar.name;
+                rarityEl.textContent = tempChar.rarity;
+                rarityEl.className = `item-rarity rarity-${tempChar.rarity}`;
+                counter++;
+                if (counter > 15) {
+                    clearInterval(interval);
+                    display.classList.remove('rolling');
+                    let picked = null;
+                    if (forcedNextChar) { picked = characters.find(c => c.name === forcedNextChar); forcedNextChar = null; }
+                    else { const selectedRarity = getRandomRarity(); const availableChars = characters.filter(c => c.rarity === selectedRarity); picked = availableChars[Math.floor(Math.random() * availableChars.length)]; }
+
+                    nameEl.textContent = picked.name;
+                    rarityEl.textContent = picked.rarity;
+                    rarityEl.className = `item-rarity rarity-${picked.rarity}`;
+
+                    rollsCount++;
+                    totalRollsMade++;
+                    if (isAutoRolling) autoRollsMade++;
+                    saveData();
+                    updateRollsUI();
+
+                    if (picked.rarity === "POTUZHNO") playSFX('potuzhno'); 
+                    else if (picked.rarity === "UROBOROS") playSFX('uroboros');
+                    else playSFX('win');
+                    if (vibeOn && navigator.vibrate) navigator.vibrate(80);
+
+                    if (!unlocked.includes(picked.name)) { unlocked.push(picked.name); saveData(); }
+
+                    if (totalRollsMade >= 20) unlockAchievement('roll_20');
+                    if (autoRollsMade >= 50) unlockAchievement('autoroll_50');
+                    if (picked.rarity === 'Anomaly') unlockAchievement('first_anomaly');
+                    const allExclusive = characters.filter(c => c.rarity === 'Exclusive').every(c => unlocked.includes(c.name));
+                    if (allExclusive) unlockAchievement('all_exclusive');
+
+                    if (picked.name === "Verity") {
+                        setTimeout(() => {
+                            playSFX('scary');
+                            document.getElementById('verityText').textContent = `"${scaryPhrases[Math.floor(Math.random() * scaryPhrases.length)]}"`;
+                            openModal('verityModal');
+                        }, 400);
+                    }
+                    isRolling = false;
+                    rollBtn.disabled = false;
+                }
+            }, 50);
+        }
+
+        /* LOOP GAME */
+        function openLoop() {
+            if (Date.now() < lockUntilTime) return;
+            loopActive = true;
+            loopFloor = 1;
+            loopCurrentRoom = null;
+            loopFloorClickCount = 0;
+            loopLastActionTime = Date.now();
+            if (loopKnirufixSaved) { loopInventory.knirufix = true; loopKnirufixSaved = false; saveData(); }
+            else loopInventory.knirufix = false;
+            loopInventory.crucifix = false;
+            loopInventory.candle = false;
+            loopSpawnerSequence = null;
+            updateLoopUI();
+            openModal('loopModal');
+            startLoopReturnTimer();
+        }
+
+        function closeLoop() {
+            loopActive = false;
+            if (loopReturnTimer) { clearInterval(loopReturnTimer); loopReturnTimer = null; }
+            closeModal('loopModal');
+        }
+
+        function startLoopReturnTimer() {
+            if (loopReturnTimer) clearInterval(loopReturnTimer);
+            loopReturnTimer = setInterval(() => {
+                if (!loopActive) return;
+                const elapsed = Date.now() - loopLastActionTime;
+                if (elapsed > 5 * 60 * 1000) {
+                    if (elapsed < 7 * 60 * 1000) {
+                        if (!document.getElementById('loopWarning')) {
+                            const w = document.createElement('div');
+                            w.id = 'loopWarning';
+                            w.className = 'loop-notification';
+                            w.textContent = '⚠️ ТИ ЩЕ ТУТ? ЛІФТ ЧЕКАЄ...';
+                            document.body.appendChild(w);
+                        }
+                        playSFX('scary');
+                    } else {
+                        closeLoop();
+                        alert('Ліфт заснув. Повертайся пізніше.');
+                    }
+                }
+            }, 5000);
+        }
+
+        function updateLoopUI() {
+            document.getElementById('loopFloor').textContent = `ПОВЕРХ ${loopFloor} / 50`;
+            const invEl = document.getElementById('loopInventory');
+            invEl.innerHTML = '';
+            if (loopInventory.knirufix) invEl.innerHTML += '<div class="inv-item has-knirufix">🔴 Knirufix</div>';
+            if (loopInventory.crucifix) invEl.innerHTML += '<div class="inv-item has-crucifix">✝️ Crucifix</div>';
+            if (loopInventory.candle) invEl.innerHTML += '<div class="inv-item has-candle">🕯️ Свічка</div>';
+            if (!loopInventory.knirufix && !loopInventory.crucifix && !loopInventory.candle) invEl.innerHTML = '<div class="inv-item" style="opacity:0.5;">🎒 Порожньо</div>';
+        }
+
+        function loopGoUp() {
+            if (!loopActive) return;
+            loopLastActionTime = Date.now();
+            playSFX('door');
+            loopFloor++;
+            if (loopFloor > 50) { loopWin(); return; }
+            generateLoopRoom();
+            updateLoopUI();
+        }
+
+        function generateLoopRoom() {
+            const roomContent = document.getElementById('loopRoomContent');
+            const actions = document.getElementById('loopActions');
+            const message = document.getElementById('loopMessage');
+            actions.innerHTML = '';
+            message.textContent = '';
+
+            let roomType = null;
+            if (loopSpawnerSequence && loopSpawnerSequence.length > 0) {
+                roomType = loopSpawnerSequence.shift();
+            } else {
+                const roll = Math.random();
+                if (roll < 0.15 && loopFloor >= 5 && loopFloor <= 45 && !loopInventory.knirufix && !loopKnirufixSaved) roomType = 'K';
+                else if (roll < 0.20 && loopFloor >= 5 && loopFloor <= 45 && !loopInventory.crucifix) roomType = 'C';
+                else if (roll < 0.22) roomType = 'M';
+                else if (roll < 0.50) roomType = 'J';
+                else if (roll < 0.75) roomType = 'L';
+                else roomType = '_';
+            }
+
+            if (loopInventory.candle) {
+                const spoilerMap = { 'J': '🔴 Jumper', 'L': '👻 Life', 'M': '🪞 Me', 'K': '🔴 Knirufix', 'C': '✝️ Crucifix', '_': '✅ Пусто' };
+                message.textContent = `🕯️ Свічка: ${spoilerMap[roomType] || '?'}`;
+            }
+
+            if (roomType === '_') {
+                roomContent.innerHTML = '<div style="font-size:3rem;">🚪</div><p>Порожня кімната</p>';
+                actions.innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>';
+            }
+            else if (roomType === 'J') {
+                roomContent.innerHTML = '<div style="font-size:1.2rem;margin-bottom:10px;">Три шафи. Одна червона.</div>';
+                const redIndex = Math.floor(Math.random() * 3);
+                for (let i = 0; i < 3; i++) {
+                    const door = document.createElement('div');
+                    door.className = `loop-door ${i === redIndex ? 'danger' : 'safe'}`;
+                    door.textContent = i === redIndex ? '🔴' : '🚪';
+                    door.onclick = () => {
+                        if (i === redIndex) {
+                            // FIX: Knirufix kills Jumper
+                            if (loopInventory.knirufix) {
+                                playSFX('knirufix');
+                                if (!killedWithKnirufix) { killedWithKnirufix = true; saveData(); unlockAchievement('kill_monster'); }
+                                roomContent.innerHTML = '<p>🔴 Knirufix знищив Jumper!</p>';
+                                actions.innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>';
+                            } else {
+                                loopDieByMonster('Jumper');
+                            }
+                        }
+                        else { roomContent.innerHTML = '<p>Пусто. Можна йти далі.</p>'; actions.innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>'; }
+                    };
+                    roomContent.appendChild(door);
+                }
+            }
+            else if (roomType === 'L') {
+                roomContent.innerHTML = '<div class="loop-monster life">👻</div><p>Life пролітає! Треба сховатись!</p>';
+                const safeIndex = Math.floor(Math.random() * 3);
+                for (let i = 0; i < 3; i++) {
+                    const door = document.createElement('div');
+                    door.className = `loop-door ${i === safeIndex ? 'safe' : 'danger'}`;
+                    door.textContent = i === safeIndex ? '🟢' : '🚪';
+                    door.onclick = () => {
+                        if (i === safeIndex) { 
+                            roomContent.innerHTML = '<p>Ти сховався. Life зник.</p>'; 
+                            actions.innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>'; 
+                        }
+                        else {
+                            // FIX: Knirufix kills Life
+                            if (loopInventory.knirufix) {
+                                playSFX('knirufix');
+                                if (!killedWithKnirufix) { killedWithKnirufix = true; saveData(); unlockAchievement('kill_monster'); }
+                                roomContent.innerHTML = '<p>🔴 Knirufix знищив Life!</p>';
+                                actions.innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>';
+                            } else {
+                                loopDieByMonster('Life');
+                            }
+                        }
+                    };
+                    roomContent.appendChild(door);
+                }
+            }
+            else if (roomType === 'M') {
+                roomContent.innerHTML = '<div class="loop-monster me">🪞</div><p><strong>Me</strong> з\'явився...</p><p style="font-size:0.8rem;color:var(--text-dim);">Це твоя копія. Що робити?</p>';
+                if (loopInventory.knirufix) {
+                    actions.innerHTML += '<button onclick="loopDupKnirufix()" style="background: linear-gradient(135deg, #ff3333, #8b0000); color: #fff; border: none; font-weight: bold; margin-bottom: 5px;">🔴 Дюпнути Knirufix</button>';
+                }
+                if (loopInventory.crucifix) {
+                    actions.innerHTML += '<button onclick="loopKillMe()" style="background: linear-gradient(135deg, #fff, #888); color: #000; border: none; font-weight: bold; margin-bottom: 5px;">✝️ Вбити Me (ціна: життя)</button>';
+                }
+                actions.innerHTML += '<button onclick="loopGoUp()" style="background: #333; color: #fff;">Пройти повз</button>';
+            }
+            else if (roomType === 'K') {
+                roomContent.innerHTML = '<div class="knirufix-anim" onclick="loopPickKnirufix()">🔴</div><p>Ти бачиш <strong>Knirufix</strong>! Натисни щоб взяти.</p>';
+            }
+            else if (roomType === 'C') {
+                roomContent.innerHTML = '<div class="knirufix-anim" style="filter:drop-shadow(0 0 20px #fff) brightness(2);" onclick="loopPickCrucifix()">✝️</div><p>Ти бачиш <strong>Crucifix</strong>! Натисни щоб взяти.</p>';
+            }
+        }
+
+        function loopPickKnirufix() {
+            loopInventory.knirufix = true;
+            playSFX('knirufix');
+            updateLoopUI();
+            document.getElementById('loopRoomContent').innerHTML = '<p>🔴 Knirufix у тебе!</p>';
+            document.getElementById('loopActions').innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>';
+        }
+
+        function loopPickCrucifix() {
+            loopInventory.crucifix = true;
+            playSFX('knirufix');
+            updateLoopUI();
+            document.getElementById('loopRoomContent').innerHTML = '<p>✝️ Crucifix у тебе!</p>';
+            document.getElementById('loopActions').innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>';
+        }
+
+        function loopDupKnirufix() {
+            playSFX('knirufix');
+            loopInventory.knirufix = true;
+            if (!loopKnirufixSaved) { loopKnirufixSaved = true; }
+            saveData();
+            document.getElementById('loopRoomContent').innerHTML = '<p>🔴🔴 Дюп успішний! Один Knirufix збережено на наступний ран.</p>';
+            document.getElementById('loopActions').innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>';
+        }
+
+        function loopKillMe() {
+            playSFX('knirufix');
+            unlockAchievement('why');
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.9);z-index:60000;display:flex;justify-content:center;align-items:center;flex-direction:column;';
+            overlay.innerHTML = '<div style="font-size:5rem;">✝️</div><h1 style="color:#333;">Me вбито...</h1><p style="color:#666;max-width:300px;text-align:center;font-style:italic;">Але ціна — твоє життя.</p>';
+            document.body.appendChild(overlay);
+            setTimeout(() => { overlay.remove(); closeLoop(); }, 3000);
+        }
+
+        function loopDieByMonster(monsterName) {
+            playSFX('scary');
+            loopDeaths++;
+            saveData();
+            unlockAchievement('loop_death');
+            if (loopDeaths >= 3) unlockAchievement('loop_death_3');
+
+            const room = document.getElementById('loopRoom');
+            room.classList.add('flash-red');
+            document.getElementById('loopRoomContent').innerHTML = `<div class="loop-monster ${monsterName.toLowerCase()}">${monsterName === 'Jumper' ? '👹' : '👻'}</div><h3 style="color:#ff3333;">ТИ ЗДОХ від ${monsterName}</h3>`;
+            document.getElementById('loopActions').innerHTML = '<button onclick="resetLoopRun()" style="background: #ff3333; color: #fff; font-weight: bold;">Почати заново</button>';
+            setTimeout(() => room.classList.remove('flash-red'), 400);
+        }
+
+        function resetLoopRun() {
+            loopFloor = 1;
+            loopInventory.knirufix = loopKnirufixSaved;
+            loopInventory.crucifix = false;
+            loopInventory.candle = false;
+            loopSpawnerSequence = null;
+            updateLoopUI();
+            document.getElementById('loopRoomContent').innerHTML = 'Натисніть "Вгору" щоб почати';
+            document.getElementById('loopActions').innerHTML = '<button onclick="loopGoUp()" style="background: linear-gradient(135deg, #2d3436, #000); color: #ff3333; border: 2px solid #ff3333; font-weight: bold;">🚪 Вгору</button>';
+        }
+
+        function loopWin() {
+            playSFX('uroboros');
+            loopWins++;
+            
+            // Reward: UROBOROS character + theme
+            if (!unlocked.includes('UROBOROS')) {
+                unlocked.push('UROBOROS');
+                saveData();
+            }
+            isUroborosThemeUnlocked = true;
+            saveData();
+            updateThemeOptions();
+            
+            unlockAchievement('loop_win');
+            
+            if (loopInventory.knirufix) { loopKnirufixSaved = true; }
+            saveData();
+            
+            document.getElementById('loopRoomContent').innerHTML = `
+                <div style="font-size:4rem;animation:knirufixGlow 0.5s infinite alternate;">🐍</div>
+                <h2 style="color:#b464ff;">🎊 ТИ ПРОЙШОВ LOOP!</h2>
+                <p>50 поверхів подолано!</p>
+                <p style="color:#b464ff;font-weight:bold;">Отримано: UROBOROS (Exclusive) + тема UROBOROS</p>
+            `;
+            document.getElementById('loopActions').innerHTML = `
+                <button onclick="closeLoop()" style="background: #b464ff; color: #000; font-weight: bold;">Вийти</button>
+                <button onclick="changeTheme('uroboros', true);document.getElementById('themeSelect').value='uroboros';" style="background: #6c5ce7; color: #fff; margin-top: 8px;">Увімкнути тему UROBOROS</button>
+            `;
+        }
+
+        function loopFloorClick() {
+            loopFloorClickCount++;
+            clearTimeout(loopFloorClickTimer);
+            if (loopFloorClickCount >= 5) {
+                loopFloorClickCount = 0;
+                const code = prompt("Введіть код адмінки Loop:");
+                if (code === "ROLL67") { openModal('loopAdminModal'); }
+            } else {
+                loopFloorClickTimer = setTimeout(() => { loopFloorClickCount = 0; }, 1500);
+            }
+        }
+
+        function loopAdminGive(item) {
+            if (item === 'knirufix') loopInventory.knirufix = true;
+            if (item === 'crucifix') loopInventory.crucifix = true;
+            if (item === 'candle') loopInventory.candle = true;
+            updateLoopUI();
+            playSFX('click');
+        }
+
+        function loopAdminTeleport() {
+            const f = parseInt(document.getElementById('loopAdminFloor').value);
+            if (f >= 1 && f <= 50) { loopFloor = f; updateLoopUI(); closeModal('loopAdminModal'); }
+        }
+
+        function loopAdminSetSpawner() {
+            const seq = document.getElementById('loopAdminSpawner').value.toUpperCase().replace(/\s/g, '').split(',');
+            loopSpawnerSequence = seq;
+            closeModal('loopAdminModal');
+            alert('Spawner активовано: ' + seq.join(', '));
+        }
+
+        function loopAdminKill() {
+            closeModal('loopAdminModal');
+            loopDieByMonster('Admin');
+        }
+
+        /* CARD GAME */
+        let cardSymbols = ['🃏', '🔮', '🎭', '🎲', '🎰', '⚡'];
+        let initialCardOrder = [];
+        let currentCardOrder = [];
+        let selectedCardIndex = null;
+        let cardGameTimerInt = null;
+        let cardTimeLeft = 20.0;
+        let isCardGameInteractive = false;
+
+        function openCardGame() { if (Date.now() < lockUntilTime) return; resetCardGridUI(); openModal('cardGameModal'); }
+        function resetCardGridUI() {
+            const grid = document.getElementById('cardGrid'); grid.innerHTML = '';
+            cardSymbols.forEach(s => { const c = document.createElement('div'); c.className = 'game-card'; c.textContent = '❓'; grid.appendChild(c); });
+            document.getElementById('cardGameStatus').textContent = "Натисніть 'Почати гру'";
+            document.getElementById('cardGameTimer').textContent = "20.0s";
+            document.getElementById('cardGameStartBtn').disabled = false;
+        }
+        function startCardGameRound() {
+            document.getElementById('cardGameStartBtn').disabled = true;
+            initialCardOrder = [...cardSymbols].sort(() => Math.random() - 0.5);
+            const grid = document.getElementById('cardGrid'); grid.innerHTML = '';
+            initialCardOrder.forEach(s => { const c = document.createElement('div'); c.className = 'game-card'; c.textContent = s; grid.appendChild(c); });
+            document.getElementById('cardGameStatus').textContent = "Запам'ятайте карти!";
+            playSFX('roll');
+            setTimeout(() => {
+                currentCardOrder = [...initialCardOrder].sort(() => Math.random() - 0.5);
+                renderInteractiveCardGrid();
+                document.getElementById('cardGameStatus').textContent = "Розставте карти правильно!";
+                isCardGameInteractive = true;
+                cardTimeLeft = 20.0;
+                cardGameTimerInt = setInterval(() => {
+                    cardTimeLeft -= 0.1;
+                    if (cardTimeLeft <= 0) { cardTimeLeft = 0; clearInterval(cardGameTimerInt); checkCardGameResult(false); }
+                    document.getElementById('cardGameTimer').textContent = `${cardTimeLeft.toFixed(1)}s`;
+                }, 100);
+            }, 3000);
+        }
+        function renderInteractiveCardGrid() {
+            const grid = document.getElementById('cardGrid'); grid.innerHTML = ''; selectedCardIndex = null;
+            currentCardOrder.forEach((s, i) => { const c = document.createElement('div'); c.className = 'game-card'; c.textContent = s; c.onclick = () => onCardClick(i); grid.appendChild(c); });
+        }
+        function onCardClick(i) {
+            if (!isCardGameInteractive) return;
+            playSFX('click');
+            const cards = document.querySelectorAll('#cardGrid .game-card');
+            if (selectedCardIndex === null) { selectedCardIndex = i; cards[i].classList.add('selected'); }
+            else { let t = currentCardOrder[selectedCardIndex]; currentCardOrder[selectedCardIndex] = currentCardOrder[i]; currentCardOrder[i] = t; renderInteractiveCardGrid(); checkIfCardsMatch(); }
+        }
+        function checkIfCardsMatch() {
+            for (let i = 0; i < initialCardOrder.length; i++) if (initialCardOrder[i] !== currentCardOrder[i]) return;
+            clearInterval(cardGameTimerInt); checkCardGameResult(true);
+        }
+        function checkCardGameResult(win) {
+            isCardGameInteractive = false;
+            document.getElementById('cardGameStartBtn').disabled = false;
+            if (win) { playSFX('win'); addRolls(15); document.getElementById('cardGameStatus').textContent = "ПЕРЕМОГА! +15 Roll 🎉"; }
+            else { playSFX('scary'); document.getElementById('cardGameStatus').textContent = "ЧАС ВИЙШОВ!"; }
+        }
+
+        /* SCHOOL KAZIK */
+        const slotSymbols = ['🏫', '📚', '✏️', '📐', '🎒', '🍎', '🔔', '📝', 'R', 'N', 'G'];
+        let isSlotSpinning = false;
+        function openSchoolKazik() {
+            if (Date.now() < lockUntilTime) return;
+            document.getElementById('slotBetInput').value = '';
+            document.getElementById('slotBetDisplay').textContent = "Ставка: 0 🎰";
+            document.getElementById('slotResult').textContent = "Введіть ставку та крутіть!";
+            document.getElementById('slotSpinBtn').disabled = false;
+            document.getElementById('slotReel1').textContent = '❓';
+            document.getElementById('slotReel2').textContent = '❓';
+            document.getElementById('slotReel3').textContent = '❓';
+            document.querySelectorAll('.slot-reel').forEach(r => r.classList.remove('rng-result'));
+            isSlotSpinning = false;
+            openModal('schoolKazikModal');
+        }
+        function spinSlots() {
+            if (isSlotSpinning) return;
+            const bet = parseInt(document.getElementById('slotBetInput').value) || 0;
+            if (bet <= 0) { document.getElementById('slotResult').textContent = "⚠️ Введіть ставку >0!"; return; }
+            document.getElementById('slotBetDisplay').textContent = `Ставка: ${bet} 🎰`;
+            document.getElementById('slotResult').textContent = "Крутимо...";
+            document.getElementById('slotSpinBtn').disabled = true;
+            isSlotSpinning = true;
+            const reels = [document.getElementById('slotReel1'), document.getElementById('slotReel2'), document.getElementById('slotReel3')];
+            reels.forEach(r => { r.classList.add('spinning'); r.classList.remove('rng-result'); });
+            let count = 0;
+            const int = setInterval(() => {
+                playSFX('slot');
+                reels.forEach(r => { r.textContent = slotSymbols[Math.floor(Math.random() * slotSymbols.length)]; });
+                count++;
+                if (count > 20) {
+                    clearInterval(int);
+                    const final = [slotSymbols[Math.floor(Math.random() * slotSymbols.length)], slotSymbols[Math.floor(Math.random() * slotSymbols.length)], slotSymbols[Math.floor(Math.random() * slotSymbols.length)]];
+                    reels.forEach((r, i) => { r.classList.remove('spinning'); r.textContent = final[i]; });
+                    isSlotSpinning = false;
+                    document.getElementById('slotSpinBtn').disabled = false;
+                    if (final.includes('R') && final.includes('N') && final.includes('G')) {
+                        reels.forEach(r => r.classList.add('rng-result'));
+                        playSFX('slotwin');
+                        const sc = characters.filter(c => c.rarity === 'School');
+                        const rc = sc[Math.floor(Math.random() * sc.length)];
+                        if (!unlocked.includes(rc.name)) { unlocked.push(rc.name); saveData(); }
+                        document.getElementById('slotResult').textContent = `🎉 R-N-G! Отримано: ${rc.name}!`;
+                        document.getElementById('slotResult').style.color = '#ffd700';
+                    } else if (final[0] === final[1] && final[1] === final[2]) {
+                        playSFX('win');
+                        document.getElementById('slotResult').textContent = `✨ Три ${final[0]}! ✨`;
+                        document.getElementById('slotResult').style.color = '#00b894';
+                    } else {
+                        document.getElementById('slotResult').textContent = `😢 Нічого. Спробуйте ще!`;
+                        document.getElementById('slotResult').style.color = 'var(--text-dim)';
+                    }
+                }
+            }, 80);
+        }
+
+        /* SANISDROP */
+        function openSanisDrop() {
+            if (Date.now() < lockUntilTime) return;
+            const select = document.getElementById('sanisDropSelect'); select.innerHTML = '';
+            const available = characters.filter(c => unlocked.includes(c.name) && c.rarity !== 'Developer' && c.rarity !== 'UROBOROS');
+            if (available.length === 0) { select.innerHTML = '<option value="">Немає персонажів</option>'; document.getElementById('sdStartBtn').disabled = true; }
+            else {
+                document.getElementById('sdStartBtn').disabled = false;
+                available.forEach(c => { const o = document.createElement('option'); o.value = c.name; o.textContent = `${c.name} (${c.rarity})`; select.appendChild(o); });
+                updateSanisDropPreview();
+            }
+            openModal('sanisDropModal');
+        }
+        function updateSanisDropPreview() {
+            const char = characters.find(c => c.name === document.getElementById('sanisDropSelect').value);
+            if (!char) return;
+            document.getElementById('sdCurrentRarity').textContent = char.rarity;
+            document.getElementById('sdCurrentRarity').className = `rarity-${char.rarity}`;
+            const idx = rarityOrder.indexOf(char.rarity);
+            if (idx === -1 || idx >= rarityOrder.length - 1) document.getElementById('sdTargetRarity').textContent = "Максимум";
+            else document.getElementById('sdTargetRarity').textContent = `${rarityOrder[idx+1]} або ${rarityOrder[Math.min(idx+2, rarityOrder.length-1)]}`;
+        }
+        function executeSanisDrop() {
+            const name = document.getElementById('sanisDropSelect').value; if (!name) return;
+            const char = characters.find(c => c.name === name);
+            const idx = unlocked.indexOf(name); if (idx === -1) return;
+            unlocked.splice(idx, 1);
+            const curIdx = rarityOrder.indexOf(char.rarity);
+            const boost = Math.floor(Math.random() * 2) + 1;
+            const targetIdx = Math.min(curIdx + boost, rarityOrder.length - 1);
+            const targetRarity = rarityOrder[targetIdx];
+            let potential = characters.filter(c => c.rarity === targetRarity && c.rarity !== 'Developer' && c.rarity !== 'UROBOROS');
+            if (potential.length === 0) potential = characters.filter(c => c.rarity === char.rarity);
+            const newChar = potential[Math.floor(Math.random() * potential.length)];
+            if (!unlocked.includes(newChar.name)) unlocked.push(newChar.name);
+            saveData(); closeModal('sanisDropModal');
+            document.getElementById('displayName').textContent = newChar.name;
+            document.getElementById('displayRarity').textContent = `${newChar.rarity} (UPGRADE!)`;
+            document.getElementById('displayRarity').className = `item-rarity rarity-${newChar.rarity}`;
+            playSFX('win');
+        }
+
+        /* RANSOM */
+        let ransomTimerInt = null, ransomSpawnInt = null, ransomScore = 0, ransomTimeLeft = 90;
+        function startRansomEvent() {
+            closeModal('promoModal');
+            playSFX('scary');
+            ransomScore = 0; ransomTimeLeft = 90;
+            document.getElementById('ransomScore').textContent = ransomScore;
+            document.getElementById('ransomTimer').textContent = "01:30";
+            document.getElementById('ransomOverlay').style.display = 'flex';
+            ransomTimerInt = setInterval(() => {
+                ransomTimeLeft--;
+                const m = Math.floor(ransomTimeLeft / 60), s = ransomTimeLeft % 60;
+                document.getElementById('ransomTimer').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                if (ransomTimeLeft <= 0) endRansomEvent(false);
+            }, 1000);
+            spawnRansomCoin();
+            ransomSpawnInt = setInterval(spawnRansomCoin, 800);
+        }
+        function spawnRansomCoin() {
+            const overlay = document.getElementById('ransomOverlay');
+            if (overlay.style.display !== 'flex') return;
+            const coin = document.createElement('div');
+            coin.className = 'ransom-coin'; coin.textContent = '+100';
+            coin.style.left = `${Math.random() * (window.innerWidth - 60) + 10}px`;
+            coin.style.top = `${Math.random() * (window.innerHeight - 150) + 100}px`;
+            coin.onclick = () => { playSFX('click'); ransomScore += 100; document.getElementById('ransomScore').textContent = ransomScore; coin.remove(); if (ransomScore >= 670) endRansomEvent(true); };
+            overlay.appendChild(coin);
+            setTimeout(() => { if (coin.parentNode) coin.remove(); }, 2500);
+        }
+        function endRansomEvent(success) {
+            clearInterval(ransomTimerInt); clearInterval(ransomSpawnInt);
+            document.getElementById('ransomOverlay').style.display = 'none';
+            document.querySelectorAll('.ransom-coin').forEach(c => c.remove());
+            if (success) {
+                isWinxpThemeUnlocked = true; saveData();
+                const o = document.getElementById('winxpThemeOption'); o.disabled = false; o.textContent = "Windows XP 🖥️";
+                playRoboticTTS("THANKS YOU");
+                openModal('winXpModal');
+            } else {
+                playSFX('scary');
+                alert("Час вийшов! Блокування на 5 хвилин.");
+                lockUntilTime = Date.now() + (5 * 60 * 1000); saveData(); checkLockState();
+            }
+        }
+
+        function updateIndexUI() {
+            const list = document.getElementById('indexList'); list.innerHTML = '';
+            document.getElementById('unlockedCount').textContent = unlocked.length;
+            document.getElementById('totalCount').textContent = characters.length;
+            characters.forEach(char => {
+                const u = unlocked.includes(char.name);
+                const li = document.createElement('li');
+                const n = document.createElement('span'); n.textContent = u ? char.name : "???"; n.className = u ? `rarity-${char.rarity}` : ''; if (!u) n.style.color = 'var(--text-dim)';
+                const r = document.createElement('span'); r.textContent = char.rarity; r.className = `rarity-${char.rarity}`; r.style.fontSize = '0.8rem';
+                li.appendChild(n); li.appendChild(r); list.appendChild(li);
+            });
+            for (let i = 0; i < 60; i++) { const s = document.createElement('li'); s.style.border = 'none'; s.style.padding = '30px 0'; s.textContent = '...'; s.style.color = 'rgba(255,255,255,0.02)'; list.appendChild(s); }
+            const fl = document.createElement('li'); fl.style.background = 'rgba(255,0,85,0.1)'; fl.style.border = '1px dashed #ff0055'; fl.style.margin = '50px 0';
+            const fn = document.createElement('span'); fn.textContent = "f a r l a n d s _ ? ? ?"; fn.className = "rarity-farlands";
+            const fb = document.createElement('button'); fb.textContent = "Отримати"; fb.style.background = "#ff0055"; fb.style.color = "#fff"; fb.onclick = () => triggerFarlandsScreamer();
+            fl.appendChild(fn); fl.appendChild(fb); list.appendChild(fl);
+        }
+
+        function triggerFarlandsScreamer() {
+            closeModal('indexModal'); playSFX('scary');
+            const s = document.getElementById('screamerOverlay'); s.style.display = 'flex';
+            setTimeout(() => {
+                s.style.display = 'none';
+                isFarlandsThemeUnlocked = true; saveData();
+                const o = document.getElementById('farlandsThemeOption'); o.disabled = false; o.textContent = "FARLANDS 🌀";
+                changeTheme('farlands', true); document.getElementById('themeSelect').value = 'farlands';
+                alert("Отримано тему 'FARLANDS'!");
+            }, 1800);
+        }
+
+        function triggerLarpEvent() {
+            closeModal('promoModal'); playSFX('scary');
+            const p = document.getElementById('verityLarpPop'); p.classList.add('active');
+            setTimeout(() => p.classList.remove('active'), 4500);
+            for (let i = 0; i < 64; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div'); el.className = 'larp-drop-item'; el.textContent = 'LARP'; el.style.left = `${Math.random() * 90 + 2}%`;
+                    const dur = Math.random() * 1.5 + 1.2; el.style.animationDuration = `${dur}s`;
+                    document.body.appendChild(el); playSFX('roll');
+                    setTimeout(() => el.remove(), dur * 1000);
+                }, i * 65);
+            }
+        }
+
+        function applyPromo() {
+            const input = document.getElementById('promoInput');
+            const msg = document.getElementById('promoMessage');
+            const code = input.value.trim().toUpperCase();
+            if (!code) return;
+            if (usedPromos.includes(code)) { msg.style.color = '#d63031'; msg.textContent = "Код вже використано!"; return; }
+
+            if (code === "RANSOM670") { usedPromos.push(code); saveData(); input.value = ''; startRansomEvent(); return; }
+            if (code === "LARP") {
+                isLarpThemeUnlocked = true; usedPromos.push(code); saveData();
+                const o = document.getElementById('larpThemeOption'); o.disabled = false; o.textContent = "LARP Theme 💬";
+                input.value = ''; triggerLarpEvent(); return;
+            }
+            if (code === "VERITY3") {
+                isVerityThemeUnlocked = true; usedPromos.push(code); saveData();
+                const o = document.getElementById('verityThemeOption'); o.disabled = false; o.textContent = "Verity Smile 🙂";
+                playSFX('win'); msg.style.color = '#00b894'; msg.textContent = "Розблоковано тему!"; input.value = ''; return;
+            }
+            if (code === "SCHOOL2026") {
+                if (!unlocked.includes("SchoolBoy")) unlocked.push("SchoolBoy");
+                isSchoolThemeUnlocked = true; usedPromos.push(code); saveData();
+                const o = document.getElementById('schoolThemeOption'); o.disabled = false; o.textContent = "SchoolVibe 🏫";
+                playSFX('win'); msg.style.color = '#00b894'; msg.textContent = "🏫 SCHOOL2026 активовано!"; input.value = ''; return;
+            }
+            if (code === "VERIFY") {
+                isVerificationThemeUnlocked = true; usedPromos.push(code); saveData();
+                const o = document.getElementById('verificationThemeOption'); o.disabled = false; o.textContent = "Verification ✅";
+                playSFX('win'); msg.style.color = '#00c8ff'; msg.textContent = "✅ VERIFY активовано!"; input.value = '';
+                changeTheme('verification', true); document.getElementById('themeSelect').value = 'verification'; return;
+            }
+            if (code === "UROBOROS") {
+                if (!unlocked.includes("UROBOROS")) unlocked.push("UROBOROS");
+                isUroborosThemeUnlocked = true; usedPromos.push(code); saveData();
+                updateThemeOptions();
+                playSFX('uroboros'); msg.style.color = '#b464ff'; msg.textContent = "🐍 UROBOROS активовано!"; input.value = ''; return;
+            }
+            if (promoCodes[code]) {
+                const n = promoCodes[code];
+                if (!unlocked.includes(n)) unlocked.push(n);
+                usedPromos.push(code); saveData(); playSFX('win');
+                msg.style.color = '#00b894'; msg.textContent = `Успішно! Отримано: ${n}`; input.value = '';
+            } else { msg.style.color = '#d63031'; msg.textContent = "Невірний промокод!"; }
+        }
+
+        function resetData() {
+            if (confirm("Скинути весь прогрес?")) {
+                localStorage.clear();
+                unlocked = []; usedPromos = []; flappyHighScore = 0; rollsCount = 0; isAutoRollUnlocked = false; isAutoRolling = false;
+                if (autoRollInterval) clearInterval(autoRollInterval);
+                isVerityThemeUnlocked = isLarpThemeUnlocked = isWinxpThemeUnlocked = isFarlandsThemeUnlocked = isSchoolThemeUnlocked = isVerificationThemeUnlocked = isMatrixThemeUnlocked = isElevatorThemeUnlocked = isUroborosThemeUnlocked = false;
+                lockUntilTime = 0;
+                unlockedAchievements = []; totalRollsMade = 0; autoRollsMade = 0; loopDeaths = 0; loopWins = 0; killedWithKnirufix = false; loopKnirufixSaved = false;
+                document.getElementById('displayName').textContent = "???";
+                document.getElementById('displayRarity').textContent = "Натисніть Roll";
+                document.getElementById('displayRarity').className = "item-rarity";
+                closeModal('settingsModal'); closeModal('adminModal'); removeVerificationBadge();
+                checkLockState(); updateRollsUI();
+            }
+        }
+
+        function exportSave() {
+            const d = { unlocked, usedPromos, flappyHighScore, rollsCount, isAutoRollUnlocked, isVerityThemeUnlocked, isLarpThemeUnlocked, isWinxpThemeUnlocked, isFarlandsThemeUnlocked, isSchoolThemeUnlocked, isVerificationThemeUnlocked, isMatrixThemeUnlocked, isElevatorThemeUnlocked, isUroborosThemeUnlocked, lockUntilTime, unlockedAchievements, totalRollsMade, autoRollsMade, loopDeaths, loopWins, killedWithKnirufix, loopKnirufixSaved };
+            const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d));
+            const a = document.createElement('a'); a.setAttribute("href", s); a.setAttribute("download", `SNrng_save_${Date.now()}.json`);
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+        function importSave() { document.getElementById('importFile').click(); }
+        function handleImport(e) {
+            const f = e.target.files[0]; if (!f) return;
+            const r = new FileReader();
+            r.onload = function(ev) {
+                try {
+                    const d = JSON.parse(ev.target.result);
+                    if (Array.isArray(d.unlocked)) unlocked = d.unlocked;
+                    if (Array.isArray(d.usedPromos)) usedPromos = d.usedPromos;
+                    if (d.flappyHighScore) flappyHighScore = d.flappyHighScore;
+                    if (d.rollsCount) rollsCount = d.rollsCount;
+                    if (d.isAutoRollUnlocked !== undefined) isAutoRollUnlocked = d.isAutoRollUnlocked;
+                    if (d.isVerityThemeUnlocked) isVerityThemeUnlocked = d.isVerityThemeUnlocked;
+                    if (d.isLarpThemeUnlocked) isLarpThemeUnlocked = d.isLarpThemeUnlocked;
+                    if (d.isWinxpThemeUnlocked) isWinxpThemeUnlocked = d.isWinxpThemeUnlocked;
+                    if (d.isFarlandsThemeUnlocked) isFarlandsThemeUnlocked = d.isFarlandsThemeUnlocked;
+                    if (d.isSchoolThemeUnlocked) isSchoolThemeUnlocked = d.isSchoolThemeUnlocked;
+                    if (d.isVerificationThemeUnlocked) isVerificationThemeUnlocked = d.isVerificationThemeUnlocked;
+                    if (d.isMatrixThemeUnlocked) isMatrixThemeUnlocked = d.isMatrixThemeUnlocked;
+                    if (d.isElevatorThemeUnlocked) isElevatorThemeUnlocked = d.isElevatorThemeUnlocked;
+                    if (d.isUroborosThemeUnlocked) isUroborosThemeUnlocked = d.isUroborosThemeUnlocked;
+                    if (d.lockUntilTime) lockUntilTime = d.lockUntilTime;
+                    if (Array.isArray(d.unlockedAchievements)) unlockedAchievements = d.unlockedAchievements;
+                    if (d.totalRollsMade) totalRollsMade = d.totalRollsMade;
+                    if (d.autoRollsMade) autoRollsMade = d.autoRollsMade;
+                    if (d.loopDeaths) loopDeaths = d.loopDeaths;
+                    if (d.loopWins) loopWins = d.loopWins;
+                    if (d.killedWithKnirufix !== undefined) killedWithKnirufix = d.killedWithKnirufix;
+                    if (d.loopKnirufixSaved !== undefined) loopKnirufixSaved = d.loopKnirufixSaved;
+                    saveData(); alert("Імпортовано!"); closeModal('settingsModal'); checkLockState(); updateRollsUI(); updateThemeOptions();
+                } catch (err) { alert("Помилка!"); }
+            };
+            r.readAsText(f);
+        }
+
+        function registerVersionClick() {
+            if (Date.now() < lockUntilTime) return;
+            versionClicks++;
+            clearTimeout(versionClickTimer);
+            if (versionClicks >= 5) {
+                versionClicks = 0;
+                document.getElementById('adminPasswordInput').value = '';
+                document.getElementById('authMessage').textContent = '';
+                openModal('authModal');
+            } else versionClickTimer = setTimeout(() => { versionClicks = 0; }, 2000);
+        }
+        function checkAdminPassword() {
+            if (document.getElementById('adminPasswordInput').value === "ROLL45") { closeModal('authModal'); openModal('adminModal'); }
+            else document.getElementById('authMessage').textContent = "Невірний пароль!";
+        }
+        function updateAdminUI() {
+            const list = document.getElementById('adminCharList');
+            const select = document.getElementById('nextCharSelect');
+            list.innerHTML = ''; select.innerHTML = '';
+            characters.forEach(char => {
+                const o = document.createElement('option'); o.value = char.name; o.textContent = `${char.name} (${char.rarity})`; select.appendChild(o);
+                const li = document.createElement('li');
+                const n = document.createElement('span'); n.textContent = `${char.name} (${char.rarity})`; n.className = `rarity-${char.rarity}`;
+                const b = document.createElement('button'); const u = unlocked.includes(char.name);
+                b.textContent = u ? "Є" : "+ Видати"; b.disabled = u;
+                b.onclick = () => { if (!unlocked.includes(char.name)) { unlocked.push(char.name); saveData(); updateAdminUI(); } };
+                li.appendChild(n); li.appendChild(b); list.appendChild(li);
+            });
+            document.getElementById('nextCharStatus').textContent = forcedNextChar ? `Наступний: ${forcedNextChar}` : '';
+        }
+        function setNextCharacter() { forcedNextChar = document.getElementById('nextCharSelect').value; document.getElementById('nextCharStatus').textContent = `Встановлено: ${forcedNextChar}`; playSFX('click'); }
+        function unlockAll() { unlocked = characters.map(c => c.name); saveData(); updateAdminUI(); }
+
+        /* FLAPPY */
+        let canvas, ctx, gameLoopId = null, bird, pipes, score, gameOver, activeShields = 0, lastTime = 0;
+        function openFlappyMenu() {
+            if (Date.now() < lockUntilTime) return;
+            document.getElementById('flappyHighScore').textContent = flappyHighScore;
+            const c = document.getElementById('charSelectList'); c.innerHTML = '';
+            const ul = characters.filter(c => unlocked.includes(c.name));
+            if (ul.length === 0) { c.innerHTML = '<p style="color:var(--text-dim);">Немає персонажів!</p>'; document.getElementById('startFlappyBtn').disabled = true; }
+            else {
+                document.getElementById('startFlappyBtn').disabled = false;
+                ul.forEach((ch, i) => {
+                    const card = document.createElement('div');
+                    card.className = `char-select-card ${selectedCharForFlappy && selectedCharForFlappy.name === ch.name ? 'selected' : ''}`;
+                    card.onclick = () => { playSFX('click'); document.querySelectorAll('.char-select-card').forEach(x => x.classList.remove('selected')); card.classList.add('selected'); selectedCharForFlappy = ch; };
+                    card.innerHTML = `<div><div class="rarity-${ch.rarity}" style="font-weight:bold;">${ch.name}</div></div>`;
+                    c.appendChild(card);
+                    if (i === 0 && !selectedCharForFlappy) card.click();
+                });
+            }
+            openModal('flappyMenuModal');
+        }
+        function startFlappyGame() {
+            if (!selectedCharForFlappy) return;
+            closeModal('flappyMenuModal'); openModal('flappyGameModal');
+            canvas = document.getElementById('flappyCanvas'); ctx = canvas.getContext('2d');
+            let grav = 0.35, jump = -6.5, radius = 12;
+            if (selectedCharForFlappy.rarity === "Common") grav = 0.25;
+            if (selectedCharForFlappy.rarity === "Rare") jump = -7.5;
+            if (selectedCharForFlappy.rarity === "Legendary") radius = 8;
+            activeShields = 0;
+            if (["POTUZHNO","TITAN"].includes(selectedCharForFlappy.rarity)) activeShields = 1;
+            if (selectedCharForFlappy.name === "Warden") activeShields = 2;
+            if (selectedCharForFlappy.name === "Creator") activeShields = 3;
+            bird = { x: 50, y: 150, v: 0, gravity: grav, jump: jump, radius: radius };
+            pipes = []; score = 0; gameOver = false; lastTime = performance.now();
+            document.getElementById('flappyGameTitle').textContent = selectedCharForFlappy.name;
+            window.removeEventListener('keydown', handleFlappyKey);
+            window.addEventListener('keydown', handleFlappyKey);
+            canvas.ontouchstart = (e) => { e.preventDefault(); flap(); };
+            canvas.onclick = (e) => { e.preventDefault(); flap(); };
+            if (gameLoopId) cancelAnimationFrame(gameLoopId);
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+        function handleFlappyKey(e) { if (e.code === 'Space') { e.preventDefault(); flap(); } }
+        function flap() { if (gameOver) { startFlappyGame(); return; } bird.v = bird.jump; playSFX('jump'); }
+        function closeFlappyGame() { if (gameLoopId) cancelAnimationFrame(gameLoopId); closeModal('flappyGameModal'); }
+        function gameLoop(now) {
+            if (!lastTime) lastTime = now;
+            let dt = (now - lastTime) / 16.66; if (dt > 2) dt = 1; lastTime = now;
+            updateFlappy(dt); renderFlappy();
+            if (!gameOver) gameLoopId = requestAnimationFrame(gameLoop);
+        }
+        function updateFlappy(dt) {
+            bird.v += bird.gravity * dt; bird.y += bird.v * dt;
+            let speed = ((selectedCharForFlappy.rarity === "Godly") ? 1.2 : 2) * dt;
+            if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 140) {
+                let gap = 110, top = Math.floor(Math.random() * (canvas.height - gap - 60)) + 30;
+                pipes.push({ x: canvas.width, top: top, bottom: canvas.height - top - gap, passed: false });
+            }
+            for (let i = 0; i < pipes.length; i++) {
+                let p = pipes[i]; p.x -= speed;
+                if (!p.passed && p.x < bird.x) { p.passed = true; score += 1; rollsCount += 1; saveData(); updateRollsUI(); if (score > flappyHighScore) { flappyHighScore = score; saveData(); } }
+                if (bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + 40 && (bird.y - bird.radius < p.top || bird.y + bird.radius > canvas.height - p.bottom)) {
+                    if (activeShields > 0) { activeShields--; pipes.splice(i, 1); i--; } else gameOver = true;
+                }
+            }
+            if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) gameOver = true;
+        }
+        function renderFlappy() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2ecc71";
+            pipes.forEach(p => { ctx.fillRect(p.x, 0, 40, p.top); ctx.fillRect(p.x, canvas.height - p.bottom, 40, p.bottom); });
+            ctx.beginPath(); ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+            ctx.fillStyle = activeShields > 0 ? "#ff007f" : "#f1c40f"; ctx.fill();
+            ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke();
+            ctx.fillStyle = "#fff"; ctx.font = "bold 18px Inter, sans-serif";
+            ctx.fillText(`Score: ${score}`, 10, 28);
+            if (gameOver) { ctx.fillStyle = "rgba(0,0,0,0.75)"; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#fff"; ctx.font = "bold 24px Inter"; ctx.fillText("GAME OVER", 80, 180); }
+        }
+
+        loadData();
+        updateThemeOptions();
+    </script>
+</body>
+</html>
